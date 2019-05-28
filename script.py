@@ -36,6 +36,16 @@ class ReferenceFrame:
 
 		return {'x': x, 'y': y, 'w': self.read_data.get_weight(name)}
 
+	def get_names_from_points(self, points):
+		inv_map = {v: k for k, v in self.y_name_list.items()}
+
+		strs = []
+		for p in points:
+			string = "" + str(round(p[0] + self.x_min))
+			string += str(inv_map[round(p[1])])
+			strs.append(string)
+
+		return strs
 
 class ReadData:
 	"""read data from a xlsx file"""

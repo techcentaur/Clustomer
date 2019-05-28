@@ -34,6 +34,7 @@ class Cluster:
 		tmp_idx.sort()
 
 		self.centroids = [data[i] for i in tmp_idx]
+		self.old_centroids = [0 for i in tmp_idx]
 		prev_clusters = [[] for i in tmp_idx]
 		next_clusters = [[] for i in tmp_idx]
 
@@ -46,10 +47,16 @@ class Cluster:
 				dist.append(weighted_distance(i, j))
 			prev_clusters[dist.index(min(dist))].append(i)
 
+
+		iteration = 0
+		print("[*] Clustering: ")
 		while not_converged:
 			# calculate new centroids
-			self.old_centroids = self.centroids
-			print(self.old_centroids)
+			for i in range(len(self.centroids)):
+				self.old_centroids[i] = self.centroids[i]
+			# print(self.old_centroids)
+			# print(self.centroids)
+
 			for i in range(len(prev_clusters)):
 				sumx, sumy, sumw = 0, 0, 0
 				for j in range(len(prev_clusters[i])):
@@ -57,9 +64,8 @@ class Cluster:
 					sumy += prev_clusters[i][j][2] * prev_clusters[i][j][1]
 					sumw += prev_clusters[i][j][2]
 
-				self.centroids[i] = (sumx/len(prev_clusters[i]), sumy/len(prev_clusters[i]), sumw/len(prev_clusters[i]))
+				self.centroids[i] = ((sumx/sumw), sumy/sumw, sumw/len(prev_clusters[i]))
 	
-			print(self.centroids)
 			# form new clusters
 			for i in data:
 				dist = []
@@ -74,10 +80,17 @@ class Cluster:
 
 			prev_clusters = next_clusters
 
-			print(diff)
+			# print(self.old_centroids)
+			# print(self.centroids)
+			# print(diff)
 			if diff < 0.01:
 				not_converged = False
+				print("[#] Converged at ")
+				print("[.] Iteration: ", iteration, " with difference ", diff)
+				# print(next_clusters)
 
+			iteration += 1
+			# break
 
 
 if __name__ == '__main__':
@@ -90,3 +103,5 @@ if __name__ == '__main__':
 	data = cl.get_points_from_names(rd, rf)
 
 	cl.get_clusters(data)
+	print("[#] Final Clusters ")
+	print(rf.get_names_from_points(cl.centroids))
