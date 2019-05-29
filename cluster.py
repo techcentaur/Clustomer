@@ -12,13 +12,11 @@ class Cluster:
 
 	def get_points_from_names(self, rd, rf):
 		points = []
-		weights = []
 		
 		for i in rd.grid_list:
 			t = rf.get_coordinate(i)
 		
 			points.append((t['x'], t['y'], t['w']))
-
 		return points
 
 		
@@ -37,8 +35,6 @@ class Cluster:
 		self.old_centroids = [0 for i in tmp_idx]
 		prev_clusters = [[] for i in tmp_idx]
 		next_clusters = [[] for i in tmp_idx]
-
-		first_iteration = True
 
 		# form intitial clusters
 		for i in data:
@@ -87,11 +83,10 @@ class Cluster:
 				not_converged = False
 				print("[#] Converged at ")
 				print("[.] Iteration: ", iteration, " with difference ", diff)
-				# print(next_clusters)
+				self.grid_cluster = prev_clusters
 
 			iteration += 1
 			# break
-
 
 if __name__ == '__main__':
 
@@ -104,4 +99,8 @@ if __name__ == '__main__':
 
 	cl.get_clusters(data)
 	print("[#] Final Clusters ")
-	print(rf.get_names_from_points(cl.centroids))
+
+	for i in range(len(cl.grid_cluster)):
+		print("========CLUSTER",i+1,"BEGINS============")
+		print(rf.get_names_from_points(cl.grid_cluster[i]))
+		print("========CLUSTER",i+1,"ENDS============")

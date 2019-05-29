@@ -17,7 +17,6 @@ class ReferenceFrame:
 		self.y_name_list = {}
 		for idx, l in enumerate(rd.names_list):
 			self.y_name_list[l] = idx
-
 	def __str__(self):
 		"""string representation of class"""
 
@@ -52,13 +51,16 @@ class ReadData:
 	
 	def __init__(self, file_name):
 		dfe = pd.read_excel(file_name)
+		# Getting the Grid column only form excel file
 		val = list(dfe['Grid'])
 
 		grids = []
 		for l in val:
+			# Filtering the null values and Nan values
 			if type(l) is not float:
 				grids.append(l)
 
+		# making the Dictionary of the number of occurances of grids 
 		c_grids = Counter(grids)
 		grid_list = sorted(c_grids)
 
@@ -74,10 +76,8 @@ class ReadData:
 		d3 = self.max_and_min(len3)
 		d4 = self.max_and_min(len4)
 		min_glob = min(d3['min'], d4['min'])
-
 		self.min_glob = min_glob
 		self.names_list = d3['names'] + d4['names']
-		
 		self.c_grids = c_grids
 		self.grid_list = grid_list
 
@@ -90,7 +90,6 @@ class ReadData:
 			tmp = re.split('(\d.*)', l)
 			len3_new.append(int(tmp[1]))
 			lister.append(tmp[0])
-
 		return {'max': (max(len3_new)), 'min': (min(len3_new)), 'names': sorted(list(set(lister)))}
 
 	def get_weight(self, name):
