@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Folder><name>3G_mumbai_grid_WK18</name>
+  <Placemark>
+	<description>Q28</description>
+	<Style><LineStyle><color>FF000000</color><width>1</width></LineStyle><PolyStyle><fill>1</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#3G_mumbai_grid_WK18">
+		<SimpleData name="Col_Name">Q</SimpleData>
+		<SimpleData name="Row_Name"></SimpleData>
+		<SimpleData name="Detractor"></SimpleData>
+		<SimpleData name="Detractor1"></SimpleData>
+	</SchemaData></ExtendedData>
+      <MultiGeometry><Polygon><outerBoundaryIs><LinearRing><coordinates>72.780762,19.232243 72.780762,19.231183 72.780762,19.229385 72.780762,19.227586 72.778858,19.227586 72.777743,19.227586 72.7778,19.2277 72.7779,19.2279 72.7781,19.2281 72.7785,19.2288 72.779,19.2296 72.7791,19.2297 72.7794,19.2302 72.7797,19.2306 72.78,19.2311 72.7803,19.2316 72.7804,19.2318 72.7806,19.232 72.780762,19.232243</coordinates></LinearRing></outerBoundaryIs></Polygon><Polygon><outerBoundaryIs><LinearRing><coordinates>72.780762,19.234262 72.780762,19.233038 72.7807,19.2331 72.7807,19.2332 72.7807,19.2334 72.7807,19.2336 72.7807,19.2338 72.7807,19.234 72.7807,19.2341 72.7807,19.2342 72.780762,19.234262</coordinates></LinearRing></outerBoundaryIs></Polygon><Polygon><outerBoundaryIs><LinearRing><coordinates>72.780321,19.236579 72.780762,19.236579 72.780762,19.234781 72.780762,19.234476 72.7807,19.2346 72.7807,19.2347 72.7805,19.2349 72.7805,19.235 72.7806,19.2351 72.7806,19.2352 72.7807,19.2353 72.7805,19.2353 72.7805,19.2354 72.7804,19.2355 72.7804,19.2357 72.7804,19.2358 72.7805,19.2358 72.7805,19.236 72.7804,19.2362 72.7804,19.2363 72.7804,19.2364 72.7804,19.2365 72.780321,19.236579</coordinates></LinearRing></outerBoundaryIs></Polygon></MultiGeometry>
+  </Placemark>
+	<Placemark>
+	<description>Q28</description>
+	<Style><LineStyle><color>FF000000</color><width>1</width></LineStyle><PolyStyle><fill>1</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#3G_mumbai_grid_WK18">
+		<SimpleData name="Col_Name">Q</SimpleData>
+		<SimpleData name="Row_Name"></SimpleData>
+		<SimpleData name="Detractor"></SimpleData>
+		<SimpleData name="Detractor1"></SimpleData>
+	</SchemaData></ExtendedData>
+      <MultiGeometry><Polygon><outerBoundaryIs><LinearRing><coordinates>73.237724,19.298432 73.237724,19.299532 73.238697,19.299532 73.238629,19.298916 73.238655,19.298549 73.238632,19.298376 73.23862,19.298027 73.238411,19.298045 73.237845,19.29842 73.237724,19.298432</coordinates></LinearRing></outerBoundaryIs></Polygon></MultiGeometry>
+  </Placemark>
+	
+</Folder>
+</Document></kml>
