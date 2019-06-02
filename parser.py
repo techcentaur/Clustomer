@@ -18,7 +18,10 @@ with open('json_files/3G_mumbai_grid_WK18.geojson', 'r+') as f:
 
     print("Updating Geo JSON")
     for feature in features:
+        # Add your cluster condition here
+        # call your property by feature["properties"]["description"] 
         feature["properties"]["stroke"] =  "#ff0000"
+        # Condition ends here
         feature["properties"]["fill-opacity"] =  "1.0"
         if(feature["geometry"]["type"]=="Polygon"):
             feature["geometry"]["type"]="GeometryCollection"
