@@ -18,8 +18,14 @@ with open('json_files/3G_mumbai_grid_WK18.geojson', 'r+') as f:
 
     print("Updating Geo JSON")
     for feature in features:
-        feature["properties"]["stroke"] =  "#0000ff"
+        feature["properties"]["stroke"] =  "#ff0000"
         feature["properties"]["fill-opacity"] =  "1.0"
+        if(feature["geometry"]["type"]=="Polygon"):
+            feature["geometry"]["type"]="GeometryCollection"
+            feature["geometry"]["geometries"]=[]
+            feature["geometry"]["geometries"].append({"type": "Polygon","coordinates": feature["geometry"]["coordinates"]})
+            del feature["geometry"]["coordinates"]
+        
 
     print("Prettify Geo JSON")
     f.seek(0)        
