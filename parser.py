@@ -4,41 +4,55 @@ import json
 import pprint
 import gdaltools
 
-pp = pprint.PrettyPrinter(indent=4)
 
 # Converting the kml file to GeoJSON
-print("Converting KML to Geo JSON")
-kml2geojson.main.convert('kml_files/3G_mumbai_grid_WK18.kml', 'json_files')
+def convert_KML_2_GeoJSON(filename):
+    print("Converting KML to Geo JSON")
+    kml_file_with_path = 'kml_files/'+filename+'.kml'
+    kml2geojson.main.convert(kml_file_with_path, 'json_files')
+    update_Geo_JSON(filename)
 
-# Updating the GeoJSON file the preffiing the code
-with open('json_files/3G_mumbai_grid_WK18.geojson', 'r+') as f:
-    data = json.load(f)
-    features = data["features"]
-    n = len(features)
 
-    print("Updating Geo JSON")
-    for feature in features:
-        # Add your cluster condition here
-        # call your property by feature["properties"]["description"] 
-        feature["properties"]["stroke"] =  "#ff0000"
-        # Condition ends here
-        feature["properties"]["fill-opacity"] =  "1.0"
-        if(feature["geometry"]["type"]=="Polygon"):
-            feature["geometry"]["type"]="GeometryCollection"
-            feature["geometry"]["geometries"]=[]
-            feature["geometry"]["geometries"].append({"type": "Polygon","coordinates": feature["geometry"]["coordinates"]})
-            del feature["geometry"]["coordinates"]
-        
+def update_Geo_JSON(filename):
+    # Updating the GeoJSON file the processing the code
+    geojson_file_with_path = 'json_files/'+filename+'.geojson'
+    with open(geojson_file_with_path, 'r+') as f:
+        data = json.load(f)
+        features = data["features"]
 
-    print("Prettify Geo JSON")
-    f.seek(0)        
-    json.dump(data, f, indent=4)
-    f.truncate()
+        print("Updating Geo JSON")
+        for feature in features:
+            # Add your cluster condition here
+            # call your property by feature["properties"]["description"] 
+            feature["properties"]["stroke"] =  "#ff0000"
+            # Condition ends here
+            feature["properties"]["fill-opacity"] =  "1.0"
+            if(feature["geometry"]["type"]=="Polygon"):
+                feature["geometry"]["type"]="GeometryCollection"
+                feature["geometry"]["geometries"]=[]
+                feature["geometry"]["geometries"].append({"type": "Polygon","coordinates": feature["geometry"]["coordinates"]})
+                del feature["geometry"]["coordinates"]
+            
+
+        print("Prettify Geo JSON")
+        f.seek(0)        
+        json.dump(data, f, indent=4)
+        f.truncate()
+        convert_GeoJSON_2_kml(filename)
+
 
 # Converting the updated JSON to KML file 
-print("Converting Geo JSON to KML")
-ogr = gdaltools.ogr2ogr()
-ogr.set_encoding("UTF-8")
-ogr.set_input("json_files/3G_mumbai_grid_WK18.geojson", srs="EPSG:4326")
-ogr.set_output("kml_files/updated_3G_mumbai_grid_WK18.kml")
-ogr.execute()
+def convert_GeoJSON_2_kml(filename):
+    print("Converting Geo JSON to KML")
+    ogr = gdaltools.ogr2ogr()
+    ogr.set_encoding("UTF-8")
+
+    updated_kml_file_with_path = 'kml_files/'+'updated_'+filename+'.kml'
+    geojson_file_with_path = 'json_files/'+filename+'.geojson'
+
+    ogr.set_input(geojson_file_with_path, srs="EPSG:4326")
+    ogr.set_output(updated_kml_file_with_path)
+    ogr.execute()
+
+filename = '3G_mumbai_grid_WK18'
+convert_KML_2_GeoJSON(filename)
