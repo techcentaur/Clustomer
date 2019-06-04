@@ -24,7 +24,7 @@ def update_Geo_JSON(filename):
         for feature in features:
             # Add your cluster condition here
             # call your property by feature["properties"]["description"] 
-            feature["properties"]["stroke"] =  "#ff0000"
+            feature["properties"]["stroke"] =  "7dff0000"
             # Condition ends here
             feature["properties"]["fill-opacity"] =  "1.0"
             if(feature["geometry"]["type"]=="Polygon"):
