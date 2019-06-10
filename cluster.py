@@ -45,7 +45,7 @@ class Cluster:
 
 
 		iteration = 0
-		# print("[*] Clustering: ")
+		print("[*] Clustering: ")
 		while not_converged:
 			# calculate new centroids
 			for i in range(len(self.centroids)):
@@ -83,8 +83,8 @@ class Cluster:
 			# print(diff)
 			if diff < 0.01:
 				not_converged = False
-				# print("[#] Converged at ")
-				# print("[.] Iteration: ", iteration, " with difference ", diff)
+				print("[#] Converged at ")
+				print("[.] Iteration: ", iteration, " with difference ", diff)
 
 			iteration += 1
 			# break

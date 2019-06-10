@@ -1,2 +1,6 @@
 pandas
-random
+kml2geojson
+json
+pprint
+gdaltools
+xml
