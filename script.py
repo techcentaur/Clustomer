@@ -40,8 +40,8 @@ class ReferenceFrame:
 
 		strs = []
 		for p in points:
-			string = "" + str(round(p[0] + self.x_min))
-			string += str(inv_map[round(p[1])])
+			string = "" + str(inv_map[round(p[1])])
+			string += str(round(p[0] + self.x_min))
 			strs.append(string)
 
 		return strs

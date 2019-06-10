@@ -7,7 +7,7 @@ class Cluster:
 	def __init__(self, n):
 		self.n = n
 
-	def reveal_variables(self):
+	def reveal_variables(self,n):
 		print("[*] No of clusters (to be): ", n)
 
 	def get_points_from_names(self, rd, rf):
@@ -45,7 +45,7 @@ class Cluster:
 
 
 		iteration = 0
-		print("[*] Clustering: ")
+		# print("[*] Clustering: ")
 		while not_converged:
 			# calculate new centroids
 			for i in range(len(self.centroids)):
@@ -80,19 +80,19 @@ class Cluster:
 				# self.old_centroids[i] = self.centroids[i]
 
 
-			print(diff)
+			# print(diff)
 			if diff < 0.01:
 				not_converged = False
-				print("[#] Converged at ")
-				print("[.] Iteration: ", iteration, " with difference ", diff)
+				# print("[#] Converged at ")
+				# print("[.] Iteration: ", iteration, " with difference ", diff)
 
 			iteration += 1
 			# break
 		self.prev_clusters = prev_clusters
 
 # Can be used as API function
-def get_dict(no_of_clusters=5);
-	cl = Cluster(5)
+def get_dict(no_of_clusters=5):
+	cl = Cluster(no_of_clusters)
 	
 	rd = ReadData("Book8.xlsx")
 	rf = ReferenceFrame(rd)
@@ -103,5 +103,5 @@ def get_dict(no_of_clusters=5);
 	dict_data = {}
 	for i in range(len(cl.centroids)):
 		dict_data[i] = rf.get_names_from_points(cl.prev_clusters[i])
-
 	return dict_data
+

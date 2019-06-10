@@ -4,6 +4,8 @@ import json
 import pprint
 import gdaltools
 import xml.etree.ElementTree as ET
+from cluster import *
+
 
 # Converting the kml file to GeoJSON
 def convert_KML_2_GeoJSON(filename):
@@ -23,24 +25,26 @@ def update_Geo_JSON(filename):
         print("Updating Geo JSON")
         for feature in features:
             # Add your cluster condition here
-            # call your property by feature["properties"]["description"] 
-            feature["properties"]["stroke"] =  "7dff0000"
+            # call your property by feature["properties"]["description"]
+            feature["properties"]["stroke"] = "7dff0000"
             # Condition ends here
-            feature["properties"]["fill-opacity"] =  "1.0"
-            if(feature["geometry"]["type"]=="Polygon"):
-                feature["geometry"]["type"]="GeometryCollection"
-                feature["geometry"]["geometries"]=[]
-                feature["geometry"]["geometries"].append({"type": "Polygon","coordinates": feature["geometry"]["coordinates"]})
+            feature["properties"]["fill-opacity"] = "1.0"
+            if(feature["geometry"]["type"] == "Polygon"):
+                feature["geometry"]["type"] = "GeometryCollection"
+                feature["geometry"]["geometries"] = []
+                feature["geometry"]["geometries"].append(
+                    {"type": "Polygon", "coordinates": feature["geometry"]["coordinates"]})
                 del feature["geometry"]["coordinates"]
-            
 
         print("Prettify Geo JSON")
-        f.seek(0)        
+        f.seek(0)
         json.dump(data, f, indent=4)
         f.truncate()
         convert_GeoJSON_2_kml(filename)
 
-# Converting the updated JSON to KML file 
+# Converting the updated JSON to KML file
+
+
 def convert_GeoJSON_2_kml(filename):
         print("Converting Geo JSON to KML")
         ogr = gdaltools.ogr2ogr()
@@ -53,25 +57,42 @@ def convert_GeoJSON_2_kml(filename):
         ogr.set_input(geojson_file_with_path, srs="EPSG:4326")
         ogr.set_output(updated_kml_file_with_path)
         ogr.execute()
-        modify_kml_according_to_clusters(updated_kml_file_with_path)   
+        modify_kml_according_to_clusters(updated_kml_file_with_path)
+
 
 def modify_kml_according_to_clusters(updated_kml_file_with_path):
+        colorArray = ['7dff0000', '7d0000ff','7d00ff00', '7dffffff', '7d234131']
+        colorArrayId = ['transBluePoly','transRedPoly','transBlackPoly','transGreenPoly','transOrangePoly']
         # Modifing the KML file according to clusters
         tree = ET.parse(updated_kml_file_with_path)
         root = tree.getroot()
         documentTag = root[0]
         folderTag = documentTag[1]
-        print(folderTag[1][0].text)
-        style = ET.SubElement(documentTag, 'Style')
-        style.set('id',"transBluePoly")
-        polystyle = ET.SubElement(style, 'PolyStyle')
-        color = ET.SubElement(polystyle, 'color')
-        color.text="7dff0000"
+        
         # Child is placemark Tag
-        for child in folderTag:
-                
-                styleUrl = ET.SubElement(child, 'styleUrl')
-                styleUrl.text = "#transBluePoly"
+        
+        total_folder_tags = len(folderTag)
+        y=get_dict()
+        
+        for i in range(len(y)):
+                colorId = '#'+colorArrayId[i]
+                print (i)
+                style = ET.SubElement(documentTag, 'Style')
+                style.set('id',colorArrayId[i])
+                polystyle = ET.SubElement(style, 'PolyStyle')
+                color = ET.SubElement(polystyle, 'color')
+                color.text=colorArray[i]
+                for j in y[i]:
+                        count =0
+                        for child in folderTag:
+                                count = count +1
+                                if count < total_folder_tags:
+                                        
+                                        if(folderTag[count][0].text == j):
+                                                print("Folder desc = ",folderTag[count][0].text)
+                                                styleUrl = ET.SubElement(child, 'styleUrl')
+                                                styleUrl.text = colorId
+                                                
         tree.write(updated_kml_file_with_path)
 
 
@@ -79,4 +100,4 @@ filename = '3G_mumbai_grid_WK18'
 
 convert_KML_2_GeoJSON(filename)
     
-        
+get_dict()   
