@@ -53,10 +53,15 @@ def convert_GeoJSON_2_kml(filename):
         ogr.set_input(geojson_file_with_path, srs="EPSG:4326")
         ogr.set_output(updated_kml_file_with_path)
         ogr.execute()
+        modify_kml_according_to_clusters(updated_kml_file_with_path)   
+
+def modify_kml_according_to_clusters(updated_kml_file_with_path):
+        # Modifing the KML file according to clusters
         tree = ET.parse(updated_kml_file_with_path)
         root = tree.getroot()
         folder = root[0][1]
         document = root[0]
+        # Creating the tags
         style = ET.SubElement(document, 'Style')
         style.set('id',"transBluePoly")
         polystyle = ET.SubElement(style, 'PolyStyle')
@@ -67,6 +72,7 @@ def convert_GeoJSON_2_kml(filename):
                 styleUrl.text = "#transBluePoly"
         tree.write(updated_kml_file_with_path)
 
+        
 filename = '3G_mumbai_grid_WK18'
 
 convert_KML_2_GeoJSON(filename)
