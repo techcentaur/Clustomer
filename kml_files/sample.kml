@@ -2,9 +2,6 @@
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
     <Style id="transBluePoly">
-      <LineStyle>
-        <width>1.5</width>
-      </LineStyle>
       <PolyStyle>
         <color>7dff0000</color>
       </PolyStyle>
