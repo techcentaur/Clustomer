@@ -74,33 +74,34 @@ class Cluster:
 			for i in range(len(self.centroids)):
 				diff += ((self.centroids[i][0] - self.old_centroids[i][0])**2 + (self.centroids[i][1] - self.old_centroids[i][1])**2)**0.5
 
-			prev_clusters = next_clusters
+			for i in range(len(self.centroids)):
+				prev_clusters[i] = next_clusters[i]
+				next_clusters[i] = []
+				# self.old_centroids[i] = self.centroids[i]
 
-			# print(self.old_centroids)
-			# print(self.centroids)
-			# print(diff)
+
+			print(diff)
 			if diff < 0.01:
 				not_converged = False
 				print("[#] Converged at ")
 				print("[.] Iteration: ", iteration, " with difference ", diff)
-				self.grid_cluster = prev_clusters
 
 			iteration += 1
 			# break
+		self.prev_clusters = prev_clusters
 
-if __name__ == '__main__':
-
+# Can be used as API function
+def get_dict(no_of_clusters=5);
 	cl = Cluster(5)
 	
 	rd = ReadData("Book8.xlsx")
 	rf = ReferenceFrame(rd)
 
 	data = cl.get_points_from_names(rd, rf)
-
 	cl.get_clusters(data)
-	print("[#] Final Clusters ")
 
-	for i in range(len(cl.grid_cluster)):
-		print("========CLUSTER",i+1,"BEGINS============")
-		print(rf.get_names_from_points(cl.grid_cluster[i]))
-		print("========CLUSTER",i+1,"ENDS============")
+	dict_data = {}
+	for i in range(len(cl.centroids)):
+		dict_data[i] = rf.get_names_from_points(cl.prev_clusters[i])
+
+	return dict_data
