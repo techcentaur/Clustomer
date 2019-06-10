@@ -59,20 +59,22 @@ def modify_kml_according_to_clusters(updated_kml_file_with_path):
         # Modifing the KML file according to clusters
         tree = ET.parse(updated_kml_file_with_path)
         root = tree.getroot()
-        folder = root[0][1]
-        document = root[0]
-        # Creating the tags
-        style = ET.SubElement(document, 'Style')
+        documentTag = root[0]
+        folderTag = documentTag[1]
+        print(folderTag[1][0].text)
+        style = ET.SubElement(documentTag, 'Style')
         style.set('id',"transBluePoly")
         polystyle = ET.SubElement(style, 'PolyStyle')
         color = ET.SubElement(polystyle, 'color')
         color.text="7dff0000"
-        for child in folder:
+        # Child is placemark Tag
+        for child in folderTag:
+                
                 styleUrl = ET.SubElement(child, 'styleUrl')
                 styleUrl.text = "#transBluePoly"
         tree.write(updated_kml_file_with_path)
 
-        
+
 filename = '3G_mumbai_grid_WK18'
 
 convert_KML_2_GeoJSON(filename)
