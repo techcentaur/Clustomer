@@ -27,3 +27,4 @@ gavy42@jarvis:~$ python3 -i script.py
 >>> 
 ```
 
+Use `get_dict(no_of_clusters)` public function in `cluster.py` to use as an API and get clusters returned in dictionary.
