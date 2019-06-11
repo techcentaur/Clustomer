@@ -91,7 +91,7 @@ class Cluster:
 		self.prev_clusters = prev_clusters
 
 # Can be used as API function
-def get_dict(no_of_clusters=5):
+def get_dict(xlsx_filepath, no_of_clusters=5):
 	cl = Cluster(no_of_clusters)
 	
 	rd = ReadData("Book8.xlsx")
