@@ -3,5 +3,4 @@ json
 pandas
 pprint
 argparse
-gdal
 kml2geojson
