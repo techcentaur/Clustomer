@@ -5,6 +5,8 @@ import gdaltools
 import kml2geojson
 import xml.etree.ElementTree as ET
 
+import random
+
 from cluster import *
 
 
@@ -29,7 +31,7 @@ class Parser:
 
         def update_Geo_JSON(self):
                 """Updating the GeoJSON file the processing the code"""
-                
+
                 filename = self.kml_filepath.split(".")[-2]
                 geojson_file_with_path = './json_files/' + filename + '.geojson'
 
@@ -84,13 +86,14 @@ class Parser:
                 Coloring the grid according to the cluster they lie
                 """
 
+                r = lambda:random.randint(0, 255)
                 # print("[#] Assigning colors to grids")
 
                 # Color Array in hex format for KML grid color
-                colorArray = ['7dff0000', '7d0000ff','7d00ff00', '7dffffff', '7d234131']
+                # colorArray = ['7dff0000', '7d0000ff','7d00ff00', '7dffffff', '7d234131']
 
                 # Respective Id's for style element
-                colorArrayId = ['transBluePoly','transRedPoly','transGreenPoly','transBlackPoly','transRandomPoly']
+                # colorArrayId = ['transBluePoly','transRedPoly','transGreenPoly','transBlackPoly','transRandomPoly']
 
                 # Modifing the KML file according to clusters
                 tree = ET.parse(updated_kml_file_with_path)
@@ -105,17 +108,18 @@ class Parser:
                 y = get_dict(self.xlsx_filepath, self.clusters)
                 
                 for i in range(len(y)):
-
+                        random_color = '%02X%02X%02X%02X' % (r(),r(),r(),r())
+                        
                         # Making the ref for Style tag
-                        colorId = '#'+colorArrayId[i]
+                        colorId = '#'+random_color
 
                         # Generating the Style tag for each cluster 
                         style = ET.SubElement(documentTag, 'Style')
-                        style.set('id',colorArrayId[i])
+                        style.set('id',random_color)
                         polystyle = ET.SubElement(style, 'PolyStyle')
 
                         color = ET.SubElement(polystyle, 'color')
-                        color.text=colorArray[i]
+                        color.text=random_color
 
                         # Looping thorough the Cluster
                         for j in y[i]:
