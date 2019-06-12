@@ -6,8 +6,23 @@
 	- Run `pip3 install -r requirements.txt` to install required modules
 	- Copy the gdaltools folder to `/usr/local/bin/python3.6/dist-pacakages`
 
+#### `python3 main.py -h`
 ```console
+usage: main.py [-h] [-k KML] [-x XLSX] [-c CLUSTERS]
+
+Map-Clustering: Clustering customers onto a map given a geo-location.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -k KML, --kml KML     Geolocation map in kml format
+  -x XLSX, --xlsx XLSX  Data of customers in excel format
+  -c CLUSTERS, --clusters CLUSTERS
+                        Number of clusters
+
 ```
+
+*Example usage:* `python3 main.py --kml 3G_mumbai_grid_WK18.kml  --xlsx Book8.xlsx -c 5`
+
 
 ### Files
 
