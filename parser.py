@@ -23,9 +23,6 @@ class Parser:
 
         # Converting the kml file to GeoJSON
         def convert_KML_2_GeoJSON(self):
-                print("[*] Converting KML to Geo-JSON")
-
-                # Inbuilt library function to convert the file. 
                 kml2geojson.main.convert(self.kml_filepath, 'json_files')
                 self.update_Geo_JSON()
 
@@ -40,7 +37,7 @@ class Parser:
                         data = json.load(f)
                         features = data["features"]
 
-                        print("[*] Updating Geo JSON")
+                        # print("[*] Updating Geo JSON")
                         for feature in features:
 
                                 # Making the grid opaque to color it. 
@@ -55,7 +52,7 @@ class Parser:
                                         del feature["geometry"]["coordinates"]
 
                         # Preffing the JSON and saving it.
-                        print("[*] Prettify Geo JSON")
+                        # print("[*] Prettify Geo JSON")
                         f.seek(0)
                         json.dump(data, f, indent=4)
                         f.truncate()
@@ -65,13 +62,13 @@ class Parser:
         def convert_GeoJSON_2_kml(self, filename):
                 """ Converting the updated GeoJSON to KML file """
                 
-                print("[*] Converting Geo JSON to KML")
+                # print("[*] Converting Geo JSON to KML")
 
                 # Reading and saving a copy of KML file in respective locations 
                 ogr = gdaltools.ogr2ogr()
                 ogr.set_encoding("UTF-8")
 
-                updated_kml_file_with_path = 'kml_files/'+'updated_'+filename+'.kml'
+                updated_kml_file_with_path = "output_"+filename+'.kml'
                 geojson_file_with_path = 'json_files/'+filename+'.geojson'
                 
                 ogr.set_input(geojson_file_with_path, srs="EPSG:4326")
@@ -87,7 +84,7 @@ class Parser:
                 Coloring the grid according to the cluster they lie
                 """
 
-                print("[#] Assigning colors to grids")
+                # print("[#] Assigning colors to grids")
 
                 # Color Array in hex format for KML grid color
                 colorArray = ['7dff0000', '7d0000ff','7d00ff00', '7dffffff', '7d234131']
@@ -133,4 +130,6 @@ class Parser:
 
                 # Writing the updated version of KMl file  
                 tree.write(updated_kml_file_with_path)
-                print("[*] Grids are now colored")
+                # print("[*] Grids colored!\n")
+
+                print("[*] Output file saved with name {}".format(updated_kml_file_with_path))

@@ -1,5 +1,6 @@
-# from parser import Parser
 import argparse
+# from pprint import pprint
+from parser import Parser
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='Map-Clustering: Clustering customers onto a map given a geo-location.')
@@ -15,5 +16,7 @@ if __name__ == '__main__':
 		"xlsx_filepath": args.xlsx,
 		"clusters": args.clusters
 	}
+
+	# pprint(data)
 
 	p = Parser(data)
