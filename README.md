@@ -1,6 +1,10 @@
-## Map-Clustering
+## Clustomer
+Raed time customer data analysis platform with results in geo-location clusters
 
-## Usage
+
+
+
+## Algorithmic Usage and Documentation
 
 ### Dependencies
 	- Run `pip3 install -r requirements.txt` to install required modules
