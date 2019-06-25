@@ -1,0 +1,7 @@
+path:
+    upload_folder: '/mnt/c/Users/chawla/Ankit/Clustomer'
+
+api:
+    google_maps_js: AIzaSyDkw_BG5OW7Yv4qBLwhptTl6rJZPdrZDhw
+
+allowed_extension: ['xlsx', 'kml']

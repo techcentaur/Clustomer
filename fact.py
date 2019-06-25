@@ -1,8 +1,9 @@
 """Application Factory"""
 
 from flask import Flask
+from _config import yml_data
 
-upload_folder = "/home/solanki/Code/NOKIA/Clustomer"
+upload_folder = yml_data["path"]["upload_folder"]
 
 app = Flask(__name__)
 
