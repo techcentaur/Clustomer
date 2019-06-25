@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>KML Display</title>
+    
+    <style>
+    #map {
+      height: 100%;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    </style>
+    <script type="text/javascript">
+
+    function initMap() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 11,
+        center: {lat: 41.876, lng: -87.624}
+      });
+
+      var ctaLayer = new google.maps.KmlLayer({
+        url: "https://raw.githubusercontent.com/techcentaur/GL_Learn/master/output_3G_mumbai_grid_WK18.kml",
+        map: map
+      });
+}
+</script>
+  </head>
+  <body>
+<div id="map"></div>
+<!-- Replace the value of the key parameter with your own API key. -->
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkUOdZ5y7hMm0yrcCQoCvLwzdM6M8s5qk&callback=initMap">
+</script>
+  </body>
+</html>

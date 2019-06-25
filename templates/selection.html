@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Selection</title>
+</head>
+
+<body>
+<form method="post">
+	<p>Select the column of the final grid</p>
+	<select name="geogrid">
+	  <option value="{{data['selected_column']}}" selected>{{data['selected_column']}}</option>
+	  {% for col in data['columns'][1:] %}
+	    <option value="{{col}}">{{col}}</option>
+	  {% endfor %}
+	</select>
+	
+	<p>Select a column on the basis of which you want to cluster</p>
+	<select name="column">
+	  <option value="{{data['selected_column_grid']}}" selected>{{data['selected_column_grid']}}</option>
+	  {% for col in data['columns'][1:] %}
+	    <option value="{{col}}">{{col}}</option>
+	  {% endfor %}
+	</select>
+
+	<input type="submit" value="Submit">
+</form>
+
+{% if data['flag'] == 1%}
+<form method="post">
+	<p>Select a value of which you want to form clusters of</p>
+	<select name="val">
+	  <!-- <option value="{{data['selected_column']}}" selected>{{data['selected_column']}}</option> -->
+	  {% for v in data['col_values'] %}
+	    <option value="{{v}}">{{v}}</option>
+	  {% endfor %}
+	</select>
+	<input type="submit" value="Submit">
+</form>
+{% endif %}
+
+</select>
+</body>
+</html>
