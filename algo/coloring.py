@@ -2,8 +2,8 @@
 This file will color the clusters
 """
 
-# from .cluster import *
 import sys
+from cluster import get_dict
 
 class ColorKML:
 	# def __init__(self, params):
@@ -41,9 +41,17 @@ class ColorKML:
 				smollist.append(i)
 
 		self.biglist = biglist
-		
 
-	def fill_the_color(self, block, color):
+	def color_the_clusters(self, data_file_path=None, number_of_clusters=None):
+		if not data_file_path:
+			data_file_path = self.data_file_path
+		if not number_of_clusters:
+			number_of_clusters = self.number_of_clusters
+
+		cluster = get_dict(data_file_path, number_of_clusters)
+
+
+	def color_the_block(self, block, color):
 		"""
 		block: block number in grid e.g. A34, BF5
 		color: color in 4-hex format: FF001122 (alpha-r-g-b)
@@ -67,6 +75,22 @@ class ColorKML:
 		return True
 
 
+	def save_file(self, kml_string, out_file_name):
+		"""
+		kml_string: kml data in string format
+		out_file_name: output kml file name
+		"""
+
+		if (out_file_name.rsplit(".", 1)[1]).lower() !='kml':
+			out_file_name += ".kml"
+
+		try:
+			with open(out_file_name, 'w') as f:
+				f.write(kml_string)
+		except Exception as e:
+			print("[!] Exception Occured: {}".format(e))
+			return False
+		return True
 
 
 
