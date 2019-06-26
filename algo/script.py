@@ -54,13 +54,12 @@ class ReferenceFrame:
 
 		return strs
 
-class ReadData:
-	"""Excel data read object"""
+class ReadGridData:
+	"""Data read of data frame consisting Grid as column"""
 
-	def __init__(self, file_path):
-		dfe = pd.read_excel(file_path)
+	def __init__(self, data_frame):
 		# Getting the Grid column only form excel file
-		val = list(dfe['Grid'])
+		val = list(data_frame['Grid'])
 
 		# Filtering
 		grids = []
@@ -105,6 +104,6 @@ class ReadData:
 		return self.c_grids[name]
 
 if __name__ == '__main__':
-	rd = ReadData("Book8.xlsx")
+	rd = ReadGridData("Book8.xlsx")
 	rf = ReferenceFrame(rd)
 	print(rf.get_coordinate('R22'))

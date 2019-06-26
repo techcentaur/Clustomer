@@ -3,22 +3,35 @@ This file will color the clusters
 """
 
 import sys
+import seaborn as sns
+
 from cluster import get_dict
+from collections import OrderedDict
 
 class ColorKML:
-	# def __init__(self, params):
-	# 	"""
-	# 	params:
-	# 	"""
+	def __init__(self, params, process=False):
+		"""
+		params:
+		"""
 
-	# 	self.kml_file_path = params["kml_file_path"]
-	# 	self.data_file_path = params["xlsx_file_path"]
-	# 	self.number_of_clusters = params["number_of_clusters"]
+		self.kml_file_path = params["kml_file_path"]
+		self.data_file_path = params["data_file_path"]
+		self.number_of_clusters = params["number_of_clusters"]
 
-	# def __repr__(self):
-	# 	string = "\n"
-	# 	string += "[*] KML-Layer file path: {}\n".format(str(self.kml_file_path))
-	# 	string += "[*] Data file path: {}\n".format(str(self.data_file_path))
+		if process:
+			self.perform_coloring(self.kml_file_path)
+			self.color_the_clusters(self.data_file_path, self.number_of_clusters)
+			string = ""
+			for key in self.biglist:
+				string += "\n".join(self.biglist[key])
+				string += "\n"
+
+			self.save_file(string, "output_file.kml")
+
+	def __repr__(self):
+		string = "\n"
+		string += "[*] KML-Layer file path: {}\n".format(str(self.kml_file_path))
+		string += "[*] Data file path: {}\n".format(str(self.data_file_path))
 
 	def perform_coloring(self, file_name):
 		with open(file_name, 'r') as f:
@@ -26,21 +39,30 @@ class ColorKML:
 
 		content = ("".join(content)).split("\n")
 
-		biglist = {}
+		biglist = OrderedDict()
 		smollist = []
 
 		temp_key = 'no_name'
 		for i in content:
 			if i.find('<description>') == -1:
-				smollist.append(i)
+				pass
 			else:
 				biglist[temp_key] = smollist
 				temp_key = (i.split("<description>")[1]).split("</description>")[0]
 				
 				smollist = []
-				smollist.append(i)
+			smollist.append(i)
+		biglist["last_name"] = smollist
 
 		self.biglist = biglist
+
+	def color_argb_list_to_hex(self, list_argb):
+		hexcolor = ""
+		for i in list_argb:
+			j = int(round(i*255))
+
+			hexcolor += (j).to_bytes(1, byteorder='big').hex().upper()
+		return hexcolor
 
 	def color_the_clusters(self, data_file_path=None, number_of_clusters=None):
 		if not data_file_path:
@@ -48,7 +70,16 @@ class ColorKML:
 		if not number_of_clusters:
 			number_of_clusters = self.number_of_clusters
 
-		cluster = get_dict(data_file_path, number_of_clusters)
+		cluster_dict, weight_dict = get_dict(data_file_path, number_of_clusters)
+
+		temp = sns.dark_palette("red", n_colors=number_of_clusters, reverse=True)
+		color_palettes = [self.color_argb_list_to_hex(list(x)) for x in temp]
+
+		for i, key in enumerate(cluster_dict):
+			for block in cluster_dict[key]:
+				self.color_the_block(block, color_palettes[i])
+
+		return True
 
 
 	def color_the_block(self, block, color):
@@ -95,5 +126,9 @@ class ColorKML:
 
 
 if __name__ == '__main__':
-	c = ColorKML()
-	c.perform_coloring(str(sys.argv[1]))
+	data={
+	"kml_file_path": "./3G_mumbai_grid_WK18.kml",
+	"data_file_path": "./Book8.xlsx",
+	"number_of_clusters": 5
+	}
+	c = ColorKML(data, process=True)
