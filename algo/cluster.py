@@ -1,7 +1,8 @@
-"""Clustering of weighted points"""
+"""Clustering Algorithm"""
+
 import random
 import pprint
-from .script import (ReferenceFrame, ReadData)
+from script import (ReferenceFrame, ReadData)
 
 class Cluster:
 	def __init__(self, n):
@@ -91,10 +92,10 @@ class Cluster:
 		self.prev_clusters = prev_clusters
 
 # Can be used as API function
-def get_dict(xlsx_filepath, no_of_clusters=5):
+def get_dict(data_file_path, no_of_clusters=5):
 	cl = Cluster(no_of_clusters)
 	
-	rd = ReadData("Book8.xlsx")
+	rd = ReadData(data_file_path)
 	rf = ReferenceFrame(rd)
 
 	data = cl.get_points_from_names(rd, rf)
