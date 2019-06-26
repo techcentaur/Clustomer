@@ -1,7 +1,7 @@
 """Clustering of weighted points"""
 import random
 import pprint
-from script import (ReferenceFrame, ReadData)
+from .script import (ReferenceFrame, ReadData)
 
 class Cluster:
 	def __init__(self, n):

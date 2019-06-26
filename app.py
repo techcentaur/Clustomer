@@ -10,6 +10,7 @@ from flask import (flash, request, redirect, render_template, url_for)
 
 from fact import app
 from _config import yml_data
+from algo import parser
 
 allowed_extension = set(yml_data["allowed_extension"])
 
@@ -77,11 +78,18 @@ def select_content(filename):
 		}
 		return render_template('selection.html', data=data)
 
-@app.route('/select/<filename>/<grid>/<col>', methods=['POST', 'GET'])
+@app.route('/select/<filename>/<grid>/<col>/', methods=['POST', 'GET'])
 def select_values(filename, grid, col):
 	if request.method=='POST':
-		
-		
+		clusters = request.form.get('val')
+		print(clusters)
+		data = {
+			"kml_filepath": kml_file_name,
+			"xlsx_filepath": filename,
+			"clusters": int(clusters)
+		}
+		p = parser.Parser(data)
+		return redirect(url_for('show_kml'))
 	else:
 		global data_file_frame
 		columns = list(data_file_frame.columns)
@@ -99,6 +107,10 @@ def select_values(filename, grid, col):
 		}
 
 		return render_template('selection.html', data=data)
+
+@app.route('/kml_viewer', methods=["GET"])
+def show_kml():
+	return render_template('display.html')
 
 if __name__=="__main__":
 	app.run()

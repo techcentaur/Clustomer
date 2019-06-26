@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 
 import random
 
-from cluster import *
+from .cluster import *
 
 
 class Parser:
