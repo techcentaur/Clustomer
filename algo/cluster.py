@@ -89,10 +89,10 @@ class Cluster:
 		self.prev_clusters = prev_clusters
 
 # Can be used as API function
-def get_dict(data_file_path, no_of_clusters=5):
+def get_dict(data_frame, no_of_clusters=5):
 	cl = Cluster(no_of_clusters)
 	
-	df = read_excel(data_file_path)
+	df = data_frame
 	rd = ReadGridData(df)
 	rf = ReferenceFrame(rd)
 
@@ -109,3 +109,25 @@ def get_dict(data_file_path, no_of_clusters=5):
 		weight_dict[i] = centroids[i][2]
 
 	return dict_data, weight_dict
+
+
+class Logic:
+	def __init__(self, data_file_path, query):
+		if (data_file_path.rsplit(".")[1]).lower() == "xlsx":
+			self.df = read_excel(data_file_path)
+		else:
+			pass
+
+		self.get_query_string(query)
+
+	def get_query_string(self, query):
+		for key in query:
+			for val in key:
+				string = str(col) + "==" + str(val)
+				if len(val) > 1:
+					string = "( " + string + ")"
+					string += " || "
+
+
+	def get_data_frame(self):
+		pass

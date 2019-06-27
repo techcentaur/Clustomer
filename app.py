@@ -16,7 +16,7 @@ from flask import Response
 from flask_cors import CORS, cross_origin
 from fact import app
 from _config import yml_data
-from algo import coloring
+from algo import coloring, cluster
 
 allowed_extension = set(yml_data["allowed_extension"])
 
@@ -88,17 +88,17 @@ def select_content(filename):
 def select_values(filename, grid, col):
 	if request.method=='POST':
 		clusters = request.form.get('val')
-		# print(clusters)
-		# data = {
-		# 	"kml_filepath": kml_file_name,
-		# 	"xlsx_filepath": filename,
-		# 	"clusters": int(clusters)
-		# }
+
 		data={
 		"kml_file_path": "./3G_mumbai_grid_WK18.kml",
 		"data_file_path": "./Book8.xlsx",
 		"number_of_clusters": 5
 		}
+
+		val = request.form.get('val')
+		query = {col: [val]}
+		
+		logic = cluster.Logic(data["data_file_path"], query)
 		c = coloring.ColorKML(data, process=True)
 
 		return redirect(url_for('show_kml'))
@@ -146,4 +146,4 @@ def get():
 # api.add_resource(APIs, '/api/v1/out.kml')
 
 if __name__=="__main__":
-	app.run(host="192.168.43.7", port=5000)
+	app.run(host="0.0.0.0", port="5000")

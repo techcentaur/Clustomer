@@ -5,11 +5,11 @@ This file will color the clusters
 import sys
 import seaborn as sns
 
-from .cluster import get_dict
+from .cluster import (get_dict, Logic)
 from collections import OrderedDict
 
 class ColorKML:
-	def __init__(self, params, process=False):
+	def __init__(self, params, logic=None, process=False):
 		"""
 		params:
 		"""
@@ -17,6 +17,9 @@ class ColorKML:
 		self.kml_file_path = params["kml_file_path"]
 		self.data_file_path = params["data_file_path"]
 		self.number_of_clusters = params["number_of_clusters"]
+
+
+		self.logic = logic 
 
 		if process:
 			self.perform_coloring(self.kml_file_path)
@@ -70,7 +73,8 @@ class ColorKML:
 		if not number_of_clusters:
 			number_of_clusters = self.number_of_clusters
 
-		cluster_dict, weight_dict = get_dict(data_file_path, number_of_clusters)
+		data_frame = self.logic.get_data_frame()
+		cluster_dict, weight_dict = get_dict(data_frame, number_of_clusters)
 
 		temp = sns.dark_palette("red", n_colors=number_of_clusters, reverse=True)
 		color_palettes = [self.color_argb_list_to_hex(list(x)) for x in temp]
