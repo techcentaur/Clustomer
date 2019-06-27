@@ -7,9 +7,7 @@ import xml.etree.ElementTree as ET
 
 import random
 
-from cluster import *
-from bs4 import BeautifulSoup
-
+from .cluster import *
 
 class Parser:
         def __init__(self, params):

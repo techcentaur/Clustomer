@@ -9,7 +9,7 @@
 <form method="post">
 	<p>Select the column of the final grid</p>
 	<select name="geogrid">
-	  <option value="{{data['selected_column']}}" selected>{{data['selected_column']}}</option>
+	  <option value="{{data['selected_column_grid']}}" selected>{{data['selected_column_grid']}}</option>
 	  {% for col in data['columns'][1:] %}
 	    <option value="{{col}}">{{col}}</option>
 	  {% endfor %}
@@ -17,7 +17,7 @@
 	
 	<p>Select a column on the basis of which you want to cluster</p>
 	<select name="column">
-	  <option value="{{data['selected_column_grid']}}" selected>{{data['selected_column_grid']}}</option>
+	  <option value="{{data['selected_column']}}" selected>{{data['selected_column']}}</option>
 	  {% for col in data['columns'][1:] %}
 	    <option value="{{col}}">{{col}}</option>
 	  {% endfor %}
@@ -35,6 +35,9 @@
 	    <option value="{{v}}">{{v}}</option>
 	  {% endfor %}
 	</select>
+	<p>Enter number of clusters: </p>
+	<input type="text" name="num_clusters">
+
 	<input type="submit" value="Submit">
 </form>
 {% endif %}

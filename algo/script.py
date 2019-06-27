@@ -1,28 +1,29 @@
-import pandas as pd 
-from collections import Counter
 import re
+import pandas as pd 
+
+from collections import Counter
 
 	
 class ReferenceFrame:
 	"""
-	Form a Reference frame:
-	Usage:
-	`get_coordinate(name)`: Get a dict of x and y coordinates
+	Relative refrence frame and co-ordinate structure of grid like data
+	@params: rd is Data object (ReadData)
 	"""
 
 	def __init__(self, rd):
-		self.x_min = rd.min_glob
 		self.read_data = rd
 
+		self.x_min = self.read_data.min_glob
 		self.y_name_list = {}
 		for idx, l in enumerate(rd.names_list):
 			self.y_name_list[l] = idx
+
 	def __str__(self):
 		"""string representation of class"""
 
-		ret = ""
-		ret += "Origin Shift X: " + str(self.x_min) + "\n"
-		ret += "Origin Map Y: " + str(self.y_name_list) + "\n"
+		ret = "[*] Origin Refrences\n"
+		ret += "[.] X-axis : -" + str(self.x_min) + "\n"
+		ret += "[.] Y-axis : " + str(self.y_name_list) + "\n"
 		return ret
 
 	def get_coordinate(self, name):
@@ -36,6 +37,10 @@ class ReferenceFrame:
 		return {'x': x, 'y': y, 'w': self.read_data.get_weight(name)}
 
 	def get_names_from_points(self, points):
+		is_list = isinstance(points, list)
+		if not is_list:
+			points = [points]
+
 		inv_map = {v: k for k, v in self.y_name_list.items()}
 
 		strs = []
@@ -44,19 +49,21 @@ class ReferenceFrame:
 			string += str(round(p[0] + self.x_min))
 			strs.append(string)
 
+		if not is_list:
+			return strs[0]
+
 		return strs
 
-class ReadData:
-	"""read data from a xlsx file"""
-	
-	def __init__(self, file_name):
-		dfe = pd.read_excel(file_name)
-		# Getting the Grid column only form excel file
-		val = list(dfe['Grid'])
+class ReadGridData:
+	"""Data read of data frame consisting Grid as column"""
 
+	def __init__(self, data_frame):
+		# Getting the Grid column only form excel file
+		val = list(data_frame['Grid'])
+
+		# Filtering
 		grids = []
 		for l in val:
-			# Filtering the null values and Nan values
 			if type(l) is not float:
 				grids.append(l)
 
@@ -73,17 +80,18 @@ class ReadData:
 			else:
 				len4.append(l)
 		
-		d3 = self.max_and_min(len3)
-		d4 = self.max_and_min(len4)
+		d3 = self.__max_and_min__(len3)
+		d4 = self.__max_and_min__(len4)
 		min_glob = min(d3['min'], d4['min'])
+
 		self.min_glob = min_glob
 		self.names_list = d3['names'] + d4['names']
+
 		self.c_grids = c_grids
 		self.grid_list = grid_list
 
-	def max_and_min(self, _list):
-		"""Find max and min from a give list"""
 
+	def __max_and_min__(self, _list):
 		len3_new = []
 		lister = []
 		for l in _list:
@@ -96,6 +104,6 @@ class ReadData:
 		return self.c_grids[name]
 
 if __name__ == '__main__':
-	rd = ReadData("Book8.xlsx")
+	rd = ReadGridData("Book8.xlsx")
 	rf = ReferenceFrame(rd)
-	rf.get_coordinate('R22')
+	print(rf.get_coordinate('R22'))

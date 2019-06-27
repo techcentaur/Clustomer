@@ -1,14 +1,14 @@
-"""Clustering of weighted points"""
+"""Clustering Algorithm"""
+
 import random
 import pprint
-from script import (ReferenceFrame, ReadData)
+from .script import (ReferenceFrame, ReadGridData)
+from collections import OrderedDict
+from pandas import read_excel
 
 class Cluster:
 	def __init__(self, n):
 		self.n = n
-
-	def reveal_variables(self,n):
-		print("[*] No of clusters (to be): ", n)
 
 	def get_points_from_names(self, rd, rf):
 		points = []
@@ -18,8 +18,6 @@ class Cluster:
 		
 			points.append((t['x'], t['y'], t['w']))
 		return points
-
-		
 
 	def get_clusters(self, data):
 		def weighted_distance(i, j):
@@ -91,17 +89,23 @@ class Cluster:
 		self.prev_clusters = prev_clusters
 
 # Can be used as API function
-def get_dict(xlsx_filepath, no_of_clusters=5):
+def get_dict(data_file_path, no_of_clusters=5):
 	cl = Cluster(no_of_clusters)
 	
-	rd = ReadData("Book8.xlsx")
+	df = read_excel(data_file_path)
+	rd = ReadGridData(df)
 	rf = ReferenceFrame(rd)
 
 	data = cl.get_points_from_names(rd, rf)
 	cl.get_clusters(data)
 
-	dict_data = {}
-	for i in range(len(cl.centroids)):
-		dict_data[i] = rf.get_names_from_points(cl.prev_clusters[i])
-	return dict_data
+	dict_data = OrderedDict()
+	weight_dict = OrderedDict()
 
+	centroids = sorted(cl.centroids, key=lambda x:x[2], reverse=True)
+
+	for i in range(len(centroids)):
+		dict_data[i] = rf.get_names_from_points(cl.prev_clusters[i])
+		weight_dict[i] = centroids[i][2]
+
+	return dict_data, weight_dict
