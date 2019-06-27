@@ -3,14 +3,20 @@
 import os
 import urllib.request
 
+import requests
 from copy import deepcopy
 from pandas import read_excel
 from werkzeug.utils import secure_filename
 from flask import (flash, request, redirect, render_template, url_for)
+from flask_restful import Resource, Api
+from flask import send_file
+from flask import make_response
+from flask import Response
 
+from flask_cors import CORS, cross_origin
 from fact import app
 from _config import yml_data
-from algo import parser
+from algo import coloring
 
 allowed_extension = set(yml_data["allowed_extension"])
 
@@ -82,13 +88,19 @@ def select_content(filename):
 def select_values(filename, grid, col):
 	if request.method=='POST':
 		clusters = request.form.get('val')
-		print(clusters)
-		data = {
-			"kml_filepath": kml_file_name,
-			"xlsx_filepath": filename,
-			"clusters": int(clusters)
+		# print(clusters)
+		# data = {
+		# 	"kml_filepath": kml_file_name,
+		# 	"xlsx_filepath": filename,
+		# 	"clusters": int(clusters)
+		# }
+		data={
+		"kml_file_path": "./3G_mumbai_grid_WK18.kml",
+		"data_file_path": "./Book8.xlsx",
+		"number_of_clusters": 5
 		}
-		p = parser.Parser(data)
+		c = coloring.ColorKML(data, process=True)
+
 		return redirect(url_for('show_kml'))
 	else:
 		global data_file_frame
@@ -112,5 +124,26 @@ def select_values(filename, grid, col):
 def show_kml():
 	return render_template('display.html')
 
+# api = Api(app)
+
+# class APIs(Resource):
+@app.route('/api/v1/out.kml', methods=["GET"])
+def get():
+	headers = {'Content-Type': 'text/xml'}
+	# with open('./output_file.kml') as kml:
+	# 	r = requests.post(url="http://127.0.0.1:5000/api/v1/out.kml", data=kml, headers=headers)
+	# return r.text
+	# return send_file("./algo/output_file.kml")
+	with open("./output_file.kml") as kml:
+		data = kml.read()
+
+		# r = make_response((kml, 200, headers))
+	# r.mimetype = 'application/vnd.google-earth.kml+xml'
+	resp = Response(response=data, status=200, mimetype="application/vnd.google-earth.kml+xml")
+
+	return resp 
+
+# api.add_resource(APIs, '/api/v1/out.kml')
+
 if __name__=="__main__":
-	app.run()
+	app.run(host="192.168.43.7", port=5000)
