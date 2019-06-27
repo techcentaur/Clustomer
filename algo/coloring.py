@@ -5,7 +5,7 @@ This file will color the clusters
 import sys
 import seaborn as sns
 
-from cluster import get_dict
+from .cluster import get_dict
 from collections import OrderedDict
 
 class ColorKML:

@@ -2,7 +2,7 @@
 
 import random
 import pprint
-from script import (ReferenceFrame, ReadGridData)
+from .script import (ReferenceFrame, ReadGridData)
 from collections import OrderedDict
 from pandas import read_excel
 
