@@ -119,7 +119,6 @@ class Logic:
 			pass
 
 		self.string = self.get_query_string(query)
-		print(self.string)
 
 	def get_query_string(self, query):
 		string = ""
@@ -136,6 +135,5 @@ class Logic:
 		if not string:
 			string = self.string
 
-		print(string)
 		return self.df.query(string)
 		

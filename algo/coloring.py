@@ -65,7 +65,7 @@ class ColorKML:
 			j = int(round(i*255))
 
 			hexcolor += (j).to_bytes(1, byteorder='big').hex().upper()
-		return hexcolor
+		return "FF"+hexcolor
 
 	def color_the_clusters(self, data_file_path=None, number_of_clusters=None):
 		if not data_file_path:
@@ -76,9 +76,8 @@ class ColorKML:
 		data_frame = self.logic.get_data_frame()
 		cluster_dict, weight_dict = get_dict(data_frame, number_of_clusters)
 		
-		print(data_frame.head())
-
-		temp = sns.dark_palette("red", n_colors=number_of_clusters, reverse=True)
+		# temp = sns.dark_palette("red", n_colors=number_of_clusters, reverse=True)
+		temp = sns.cubehelix_palette(n_colors=number_of_clusters, reverse=True)
 		color_palettes = [self.color_argb_list_to_hex(list(x)) for x in temp]
 
 		for i, key in enumerate(cluster_dict):

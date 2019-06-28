@@ -93,17 +93,16 @@ def select_values(filename, grid, col):
 		"data_file_path": "./Book8.xlsx",
 		"number_of_clusters": 5
 		}
-		print(data)
 		val = []
 		for i in set(list(data_file_frame[col])):
 			if request.form.get(str(i)):
 				val.append(i)
 
 		query = {col: val}
-		print(query)
+
 		logic = cluster.Logic(data["data_file_path"], query)
 		c = coloring.ColorKML(data, logic=logic, process=True)
-		print("everything alright")
+
 		return redirect(url_for('show_kml'))
 	else:
 		columns = list(data_file_frame.columns)

@@ -2,6 +2,12 @@ path:
     upload_folder: '/mnt/c/Users/chawla/Ankit/Clustomer'
 
 api:
-    google_maps_js: AIzaSyDkw_BG5OW7Yv4qBLwhptTl6rJZPdrZDhw
+    google_maps_js: AIzaSyCPsR-n1YeVpLQeOa4Yjp5-mJz_DuOEn78
 
 allowed_extension: ['xlsx', 'kml']
+
+github:
+    handle: 'VarunBhandia'
+    password: 'rj14cn2847'
+    repo: 'test'
+    branch: 'master'
