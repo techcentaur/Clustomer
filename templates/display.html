@@ -17,6 +17,9 @@
     </style>
     <script type="text/javascript">
 
+    var bigurl = '{{github_url|safe}}';
+    console.log(bigurl);
+
     function initMap() {
       var map = new google.maps.Map(document.getElementById('map'), {
         zoom: 11,
@@ -24,7 +27,7 @@
       });
 
       var ctaLayer = new google.maps.KmlLayer({
-        url: "http://10.196.161.34:5000/api/v1/out.kml",
+        url: bigurl,
         map: map
       });
     }
