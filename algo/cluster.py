@@ -113,21 +113,29 @@ def get_dict(data_frame, no_of_clusters=5):
 
 class Logic:
 	def __init__(self, data_file_path, query):
-		if (data_file_path.rsplit(".")[1]).lower() == "xlsx":
+		if (data_file_path.rsplit(".", 1)[1]).lower() == "xlsx":
 			self.df = read_excel(data_file_path)
 		else:
 			pass
 
-		self.get_query_string(query)
+		self.string = self.get_query_string(query)
+		print(self.string)
 
 	def get_query_string(self, query):
+		string = ""
 		for key in query:
-			for val in key:
-				string = str(col) + "==" + str(val)
-				if len(val) > 1:
-					string = "( " + string + ")"
-					string += " || "
+			for jdx, val in enumerate(query[key]):
+				string += "( " + str(key) + "==" + str(val) + " )"
+				if len(query[key]) > 1:
+					if jdx != (len(query[key])-1):
+						string += " or "
 
+		return string
 
-	def get_data_frame(self):
-		pass
+	def get_data_frame(self, string=None):
+		if not string:
+			string = self.string
+
+		print(string)
+		return self.df.query(string)
+		

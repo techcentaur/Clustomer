@@ -29,7 +29,7 @@ class ColorKML:
 				string += "\n".join(self.biglist[key])
 				string += "\n"
 
-			self.save_file(string, "output_file.kml")
+			self.save_file(string, "./output_file.kml")
 
 	def __repr__(self):
 		string = "\n"
@@ -75,6 +75,8 @@ class ColorKML:
 
 		data_frame = self.logic.get_data_frame()
 		cluster_dict, weight_dict = get_dict(data_frame, number_of_clusters)
+		
+		print(data_frame.head())
 
 		temp = sns.dark_palette("red", n_colors=number_of_clusters, reverse=True)
 		color_palettes = [self.color_argb_list_to_hex(list(x)) for x in temp]
