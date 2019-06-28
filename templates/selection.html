@@ -30,9 +30,8 @@
 <form method="post">
 	<p>Select a value of which you want to form clusters of</p>
 	<select name="val">
-	  <!-- <option value="{{data['selected_column']}}" selected>{{data['selected_column']}}</option> -->
 	  {% for v in data['col_values'] %}
-	    <option value="{{v}}">{{v}}</option>
+	    <input type="checkbox" name="{{v}}" value="{{v}}"/>{{v}}<br>
 	  {% endfor %}
 	</select>
 	<p>Enter number of clusters: </p>

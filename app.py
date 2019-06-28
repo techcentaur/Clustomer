@@ -84,6 +84,7 @@ def select_content(filename):
 
 @app.route('/select/<filename>/<grid>/<col>/', methods=['POST', 'GET'])
 def select_values(filename, grid, col):
+	global data_file_frame
 	if request.method=='POST':
 		clusters = request.form.get('val')
 
@@ -92,16 +93,19 @@ def select_values(filename, grid, col):
 		"data_file_path": "./Book8.xlsx",
 		"number_of_clusters": 5
 		}
+		print(data)
+		val = []
+		for i in set(list(data_file_frame[col])):
+			if request.form.get(str(i)):
+				val.append(i)
 
-		val = request.form.get('val')
-		query = {col: [val]}
-		
+		query = {col: val}
+		print(query)
 		logic = cluster.Logic(data["data_file_path"], query)
-		c = coloring.ColorKML(data, process=True)
-
+		c = coloring.ColorKML(data, logic=logic, process=True)
+		print("everything alright")
 		return redirect(url_for('show_kml'))
 	else:
-		global data_file_frame
 		columns = list(data_file_frame.columns)
 
 		if len(columns) == 0:
@@ -120,21 +124,21 @@ def select_values(filename, grid, col):
 
 @app.route('/kml_viewer', methods=["GET"])
 def show_kml():
-
 	data={
         "user": yml_data["github"]["handle"],
         "password": yml_data["github"]["password"],
         "repo": yml_data["github"]["repo"],
         "branch": yml_data["github"]["branch"],
-        "to_be_uploaded_file_list": ["../output_file.kml"],
+        "to_be_uploaded_file_list": ["./output_file.kml"],
         "commit_message": None,
-        "verbose": True
+        "verbose": True,
 	}
+	print(data)
 
 	github_wrapper.post_on_github(data)
 	url = "https://raw.githubusercontent.com/"+data["user"]+"/"+data["repo"]+"/"+data["branch"]+"/"+"output_file.kml"
 
-	return render_template('display.html', github_url=url)
+	return render_template('display.html', github_url=url, api=yml_data["api"]["google_maps_js"])
 
 # api = Api(app)
 
