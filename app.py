@@ -7,16 +7,14 @@ import requests
 from copy import deepcopy
 from pandas import read_excel
 from werkzeug.utils import secure_filename
-from flask import (flash, request, redirect, render_template, url_for)
+from flask import (flash, request, redirect, render_template, url_for, Response)
 from flask_restful import Resource, Api
-from flask import send_file
-from flask import make_response
-from flask import Response
-
 from flask_cors import CORS, cross_origin
+
 from fact import app
+from algo import (coloring, cluster, github_wrapper)
+
 from _config import yml_data
-from algo import coloring, cluster
 
 allowed_extension = set(yml_data["allowed_extension"])
 
@@ -122,7 +120,21 @@ def select_values(filename, grid, col):
 
 @app.route('/kml_viewer', methods=["GET"])
 def show_kml():
-	return render_template('display.html')
+
+	data={
+        "user": yml_data["github"]["handle"],
+        "password": yml_data["github"]["password"],
+        "repo": yml_data["github"]["repo"],
+        "branch": yml_data["github"]["branch"],
+        "to_be_uploaded_file_list": ["../output_file.kml"],
+        "commit_message": None,
+        "verbose": True
+	}
+
+	github_wrapper.post_on_github(data)
+	url = "https://raw.githubusercontent.com/"+data["user"]+"/"+data["repo"]+"/"+data["branch"]+"/"+"output_file.kml"
+
+	return render_template('display.html', github_url=url)
 
 # api = Api(app)
 
@@ -130,17 +142,10 @@ def show_kml():
 @app.route('/api/v1/out.kml', methods=["GET"])
 def get():
 	headers = {'Content-Type': 'text/xml'}
-	# with open('./output_file.kml') as kml:
-	# 	r = requests.post(url="http://127.0.0.1:5000/api/v1/out.kml", data=kml, headers=headers)
-	# return r.text
-	# return send_file("./algo/output_file.kml")
 	with open("./output_file.kml") as kml:
 		data = kml.read()
 
-		# r = make_response((kml, 200, headers))
-	# r.mimetype = 'application/vnd.google-earth.kml+xml'
 	resp = Response(response=data, status=200, mimetype="application/vnd.google-earth.kml+xml")
-
 	return resp 
 
 # api.add_resource(APIs, '/api/v1/out.kml')
