@@ -1,5 +1,5 @@
 path:
-    upload_folder: '/mnt/c/Users/chawla/Ankit/Clustomer'
+    upload_folder: '/home/moss/Desktop/Internships Stuff/NOKIA/Map-Clustering/'
 
 api:
     google_maps_js: AIzaSyCPsR-n1YeVpLQeOa4Yjp5-mJz_DuOEn78

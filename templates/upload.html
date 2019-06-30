@@ -1,25 +1,51 @@
-<!doctype html>
-<title>Clustomer</title>
-<h2>Select a file to upload</h2>
-<p>
-	{% with messages = get_flashed_messages() %}
-	  {% if messages %}
-		<ul class=flashes>
-		{% for message in messages %}
-		  <li>{{ message }}</li>
-		{% endfor %}
-		</ul>
-	  {% endif %}
-	{% endwith %}
-</p>
-<form method="post" action="/" enctype="multipart/form-data">
-    <dl>
-    	<p>Upload an excel file containing data</p>
-		<p><input type="file" name="datafile" autocomplete="off" required></p>
-    	<p>Upload a standard map of KML file</p>
-		<p><input type="file" name="kmlfile" autocomplete="off" required></p>
-    </dl>
-    <p>
-		<input type="submit" value="Submit">
-	</p>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Clustomer</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+	<div class="container">
+		<h2>Select a file to upload</h2>
+		<p>
+			{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			<ul class=flashes>
+				{% for message in messages %}
+				<li>{{ message }}</li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+			{% endwith %}
+		</p>
+		<div class="row">
+			<div class="col-md-4">
+				<form method="post" action="/" enctype="multipart/form-data">
+					<div class="form-group">
+						<label>Upload an excel file containing data:</label>
+						<input type="file" name="datafile" autocomplete="off" class="form-control" required>
+					</div>
+					<div class="form-group">
+						<label>Upload a standard map of KML file:</label>
+						<input type="file" name="kmlfile" autocomplete="off" class="form-control" required>
+					</div>
+			
+					<button type="submit" class="btn btn-default">Submit</button>
+				</form>
+			</div>
+			<div class="col-md-8"></div>
+
+		</div>
+		
+	</div>
+
+</body>
+
+</html>

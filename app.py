@@ -7,9 +7,11 @@ import requests
 from copy import deepcopy
 from pandas import read_excel
 from werkzeug.utils import secure_filename
-from flask import (flash, request, redirect, render_template, url_for, Response)
+from flask import (flash, request, redirect,
+                   render_template, url_for, Response)
 from flask_restful import Resource, Api
 from flask_cors import CORS, cross_origin
+from pymongo import MongoClient
 
 from fact import app
 from algo import (coloring, cluster, github_wrapper)
@@ -22,16 +24,19 @@ allowed_extension = set(yml_data["allowed_extension"])
 kml_file_name = ""
 data_file_frame = None
 
+
 def allowed_file(filename):
 	return ('.' in filename) and (filename.rsplit('.', 1)[1].lower() in allowed_extension)
+
 
 @app.route('/')
 def upload_form():
 	return render_template('upload.html')
 
+
 @app.route('/', methods=['POST'])
 def upload_file():
-	if request.method=='POST':
+	if request.method == 'POST':
 		if 'datafile' not in request.files or 'kmlfile' not in request.files:
 			flash('Some file-part not submitted in form!')
 			return redirect(request.url)
@@ -39,7 +44,7 @@ def upload_file():
 		file = request.files['datafile']
 		file2 = request.files['kmlfile']
 
-		if file.filename=="" or file2.filename=="":
+		if file.filename == "" or file2.filename == "":
 			flash('Null file selected for uploading!')
 			return redirect(request.url)
 
@@ -57,16 +62,20 @@ def upload_file():
 			flash("Allowed extensions are: {}".format(str(allowed_extension)))
 			return redirect(request.url)
 
+
 @app.route('/select/<filename>', methods=['GET', 'POST'])
 def select_content(filename):
-	if request.method=='POST':
+	if request.method == 'POST':
 		geogrid = request.form.get('geogrid')
 		column = request.form.get('column')
-		
+
 		return redirect(url_for('select_values', filename=filename, grid=geogrid, col=column))
+	
 	else:
 		global data_file_frame
+		
 		df = read_excel(filename)
+		
 		columns = list(df.columns)
 		data_file_frame = deepcopy(df)
 
@@ -154,4 +163,4 @@ def get():
 # api.add_resource(APIs, '/api/v1/out.kml')
 
 if __name__=="__main__":
-	app.run(host="0.0.0.0", port="5000")
+	app.run(host="0.0.0.0", port=5000)

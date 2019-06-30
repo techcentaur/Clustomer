@@ -1,45 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Selection</title>
+	<title>Selection</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
 </head>
 
 <body>
-<form method="post">
-	<p>Select the column of the final grid</p>
-	<select name="geogrid">
-	  <option value="{{data['selected_column_grid']}}" selected>{{data['selected_column_grid']}}</option>
-	  {% for col in data['columns'][1:] %}
-	    <option value="{{col}}">{{col}}</option>
-	  {% endfor %}
-	</select>
-	
-	<p>Select a column on the basis of which you want to cluster</p>
-	<select name="column">
-	  <option value="{{data['selected_column']}}" selected>{{data['selected_column']}}</option>
-	  {% for col in data['columns'][1:] %}
-	    <option value="{{col}}">{{col}}</option>
-	  {% endfor %}
-	</select>
+	<div class="container">
 
-	<input type="submit" value="Submit">
-</form>
+		<form method="post">
+			<div class="form-group">
+				<label>Select the column of the final grid</label>
+				<select name="geogrid" id="geogrid" class="form-control">
+					<option value="{{data['selected_column_grid']}}" selected>{{data['selected_column_grid']}}</option>
+					{% for col in data['columns'][1:] %}
+					<option value="{{col}}">{{col}}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="form-group">
+				<label>Select a column on the basis of which you want to cluster</label>
+				<select name="column" class="form-control" id="column">
+					<option value="{{data['selected_column']}}" selected>{{data['selected_column']}}</option>
+					{% for col in data['columns'][1:] %}
+					<option value="{{col}}">{{col}}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<button type="submit" class="btn btn-default">Submit</button>
+		</form>
 
-{% if data['flag'] == 1%}
-<form method="post">
-	<p>Select a value of which you want to form clusters of</p>
-	<select name="val">
-	  {% for v in data['col_values'] %}
-	    <input type="checkbox" name="{{v}}" value="{{v}}"/>{{v}}<br>
-	  {% endfor %}
-	</select>
-	<p>Enter number of clusters: </p>
-	<input type="text" name="num_clusters">
-	<input type="submit" value="Submit">
-</form>
-{% endif %}
+		{% if data['flag'] == 1%}
+		<form method="post">
+			<div class="form-group">
 
-</select>
+				<label>Select a value of which you want to form clusters of</label>
+				<select name="val" class="form-control" id="val">
+					{% for v in data['col_values'] %}
+					<input type="checkbox" name="{{v}}" value="{{v}}" />{{v}}<br>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="form-group">
+
+				<label>Enter number of clusters: </label>
+				<input type="text" name="num_clusters" class="form-control">
+				<button type="submit" class="btn btn-default">Submit</button>
+		</form>
+		{% endif %}
+
+		</select>
+	</div>
 </body>
+<script>
+	$(document).ready(function () {
+		$('#geogrid').select2();
+	});
+	$(document).ready(function () {
+		$('#column').select2();
+	});
+	// $(document).ready(function () {
+	// 	$('#val').select2();
+	// });
+</script>
+
 </html>
