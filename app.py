@@ -75,7 +75,24 @@ def select_content(filename):
 		global data_file_frame
 		
 		df = read_excel(filename)
-		
+		collection = []
+		length_of_columns = ''
+
+		data_dict = df.to_dict()
+		for i in data_dict:
+			length_of_columns = len(data_dict[i])
+		for j in range(length_of_columns):
+			each_row = {}
+			for i in data_dict:
+				if i in each_row:
+					each_row[i].append(data_dict[i][j])
+				else:
+					each_row[i] = data_dict[i][j]
+			collection.append(each_row)
+		client = MongoClient('mongodb://localhost:27017/')
+		with client:
+			db = client.testdb
+			db.database_table.insert_many(collection)
 		columns = list(df.columns)
 		data_file_frame = deepcopy(df)
 
