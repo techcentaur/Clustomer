@@ -1,0 +1,9 @@
+copy
+flask
+flask_restful
+flask_cors
+pandas
+argparse
+pygithub
+seaborn
+pprint
