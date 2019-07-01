@@ -4,6 +4,8 @@ import os
 import urllib.request
 
 import requests
+import datetime
+
 from copy import deepcopy
 from pandas import read_excel
 from werkzeug.utils import secure_filename
@@ -84,6 +86,11 @@ def select_content(filename):
 		for j in range(length_of_columns):
 			each_row = {}
 			for i in data_dict:
+				print(data_dict[i][j])
+				if(isinstance(data_dict[i][j], datetime.time) or isinstance(data_dict[i][j], datetime.date) ):
+					data_dict[i][j] = str(data_dict[i][j])
+					print(data_dict[i][j])
+	
 				if i in each_row:
 					each_row[i].append(data_dict[i][j])
 				else:
