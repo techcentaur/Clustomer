@@ -76,8 +76,8 @@ class ColorKML:
 		data_frame = self.logic.get_data_frame()
 		cluster_dict, weight_dict = get_dict(data_frame, number_of_clusters)
 		
-		# temp = sns.dark_palette("red", n_colors=number_of_clusters, reverse=True)
-		temp = sns.cubehelix_palette(n_colors=number_of_clusters, reverse=True)
+		temp = sns.dark_palette("red", n_colors=number_of_clusters, reverse=True)
+		# temp = sns.cubehelix_palette(n_colors=number_of_clusters, reverse=True)
 		color_palettes = [self.color_argb_list_to_hex(list(x)) for x in temp]
 
 		for i, key in enumerate(cluster_dict):

@@ -103,7 +103,7 @@ def select_values(filename, grid, col):
 		logic = cluster.Logic(data["data_file_path"], query)
 		c = coloring.ColorKML(data, logic=logic, process=True)
 
-		return redirect(url_for('show_kml'))
+		return redirect(url_for('result_page'))
 	else:
 		columns = list(data_file_frame.columns)
 
@@ -120,6 +120,15 @@ def select_values(filename, grid, col):
 		}
 
 		return render_template('selection.html', data=data)
+
+@app.route('/result_page', methods=["GET"])
+def result_page():
+	url = "http://localhost:5000/api/v1/out.kml"
+	data = {
+		"url": url
+	}
+	return render_template('result.html', data=data)
+
 
 @app.route('/kml_viewer', methods=["GET"])
 def show_kml():
