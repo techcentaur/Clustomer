@@ -1,6 +1,0 @@
-xml
-json
-pandas
-pprint
-argparse
-kml2geojson
