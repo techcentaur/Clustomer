@@ -11,3 +11,7 @@ github:
     password: 'rj14cn2847'
     repo: 'test'
     branch: 'master'
+
+database:
+    name: datafiles.db
+    table_name: filenames
