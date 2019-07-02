@@ -9,19 +9,22 @@ from .cluster import (get_dict, Logic)
 from collections import OrderedDict
 
 class ColorKML:
-	def __init__(self, params, logic=None, process=False):
+	def __init__(self, params, logger=None, logic=None, process=False):
 		"""
 		params:
 		"""
+
+		self.logger.info("[*] Running ColorKML class with process=True \n {}".format(str(self.__repr__)))
 
 		self.kml_file_path = params["kml_file_path"]
 		self.data_file_path = params["data_file_path"]
 		self.number_of_clusters = params["number_of_clusters"]
 
-
+		self.logger = logger
 		self.logic = logic 
 
 		if process:
+			self.logger.info("[*] Coloring the map:")
 			self.perform_coloring(self.kml_file_path)
 			self.color_the_clusters(self.data_file_path, self.number_of_clusters)
 			string = ""
@@ -35,6 +38,7 @@ class ColorKML:
 		string = "\n"
 		string += "[*] KML-Layer file path: {}\n".format(str(self.kml_file_path))
 		string += "[*] Data file path: {}\n".format(str(self.data_file_path))
+		return string
 
 	def perform_coloring(self, file_name):
 		with open(file_name, 'r') as f:
@@ -63,9 +67,9 @@ class ColorKML:
 		hexcolor = ""
 		for i in list_argb:
 			j = int(round(i*255))
-
 			hexcolor += (j).to_bytes(1, byteorder='big').hex().upper()
-		return "FF"+hexcolor
+
+		return hexcolor
 
 	def color_the_clusters(self, data_file_path=None, number_of_clusters=None):
 		if not data_file_path:
@@ -76,6 +80,7 @@ class ColorKML:
 		data_frame = self.logic.get_data_frame()
 		cluster_dict, weight_dict = get_dict(data_frame, number_of_clusters)
 		
+		self.logger.debug("[.] Using red-shade palette")
 		temp = sns.dark_palette("red", n_colors=number_of_clusters, reverse=True)
 		# temp = sns.cubehelix_palette(n_colors=number_of_clusters, reverse=True)
 		color_palettes = [self.color_argb_list_to_hex(list(x)) for x in temp]

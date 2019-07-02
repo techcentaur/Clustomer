@@ -147,7 +147,7 @@ def select_values(filename, grid, col):
 		query = {col: val}
 
 		logic = cluster.Logic(data["data_file_path"], query, logger)
-		c = coloring.ColorKML(data, logic=logic, process=True)
+		c = coloring.ColorKML(data, logger=logger, logic=logic, process=True)
 
 		return redirect(url_for('result_page'))
 	else:

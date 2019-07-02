@@ -112,13 +112,17 @@ def get_dict(data_frame, no_of_clusters=5):
 
 
 class Logic:
-	def __init__(self, data_file_path, query):
+	def __init__(self, data_file_path, query, logger):
+		self.logger = logger
+
 		if (data_file_path.rsplit(".", 1)[1]).lower() == "xlsx":
 			self.df = read_excel(data_file_path)
 		else:
 			pass
 
 		self.string = self.get_query_string(query)
+		self.logger.debug("[*] Data-frame query formed for selected column as {}".format(query))
+
 
 	def get_query_string(self, query):
 		string = ""
