@@ -7,6 +7,8 @@ import urllib.request
 import requests
 from copy import deepcopy
 from pandas import read_excel
+from datetime import datetime
+
 from werkzeug.utils import secure_filename
 from flask import (flash, request, redirect, render_template, url_for, Response)
 from flask_restful import Resource, Api
@@ -59,14 +61,23 @@ def upload_file():
 
 				file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 				file2.save(os.path.join(app.config['UPLOAD_FOLDER'], kml_file_name))
+				logger.warn("[.] File names securely parsed, and files saved in configured directory")
 
+				# registering in data base
+				conn = sqlite3.connect("./db/" + yml_data["database"]["name"])
+				cur = conn.cursor()
+				cur.execute("insert into filenames values (null, ?, ?, ?)", (filename, kml_file_name, datetime.datetime.now(), ))
+				conn.commit()
+				conn.close()
+				logger.info("[.] Entry registered in data-base!")
+				
 				flash('File(s) successfully uploaded!')
 				return redirect(url_for('select_content', filename=filename))
 			else:
 				flash("Allowed extensions are: {}".format(str(allowed_extension)))
 				return redirect(request.url)
 	else:
-		conn = sqlite3.connect("./db/"+yml_data["database"]["name"])
+		conn = sqlite3.connect("./db/" + yml_data["database"]["name"])
 		cur = conn.cursor()
 		cur.execute("select * from filenames")
 		query_data = cur.fetchall()
@@ -120,21 +131,22 @@ def select_content(filename):
 def select_values(filename, grid, col):
 	global data_file_frame
 	if request.method=='POST':
-		clusters = request.form.get('val')
+		clusters = request.form.get('num_clusters')
+		logger.debug("[*] {c} column selected: With {i} number of clusters to form:".format(c=col, i=clusters))
 
 		data={
-		"kml_file_path": "./3G_mumbai_grid_WK18.kml",
-		"data_file_path": "./Book8.xlsx",
-		"number_of_clusters": 5
+			"data_file_path": app.config['UPLOAD_FOLDER'] + "/" + filename,
+			"kml_file_path": app.config['UPLOAD_FOLDER'] + "/" + kml_file_name,
+			"number_of_clusters": int(clusters)
 		}
+
 		val = []
 		for i in set(list(data_file_frame[col])):
 			if request.form.get(str(i)):
 				val.append(i)
-
 		query = {col: val}
 
-		logic = cluster.Logic(data["data_file_path"], query)
+		logic = cluster.Logic(data["data_file_path"], query, logger)
 		c = coloring.ColorKML(data, logic=logic, process=True)
 
 		return redirect(url_for('result_page'))

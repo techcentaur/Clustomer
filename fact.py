@@ -43,8 +43,8 @@ result = cur.fetchall()
 if len(result) == 0:
 	cur.execute(''' create table filenames 
 			(id INTEGER PRIMARY KEY,
-			kmlfile TEXT NOT NULL,
 			datafile TEXT NOT NULL,
+			kmlfile TEXT NOT NULL,
 			time DATETIME)''')
 	conn.commit()
 	# table created
