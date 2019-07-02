@@ -18,7 +18,7 @@ logger = logging.getLogger('LOG')
 
 
 # flask application initiation
-upload_folder = yml_data["path"]["upload_folder"]
+upload_folder = yml_data["path"]["file_upload_folder"]
 app = Flask(__name__)
 app.secret_key="secret key"
 app.config['UPLOAD_FOLDER'] = upload_folder
@@ -33,6 +33,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 # set database connection
 if not os.path.exists("./db"):
 	os.makedirs("./db")
+
 conn = sqlite3.connect("./db/"+yml_data["database"]["name"])
 ## create the table if it does not exists
 cur = conn.cursor()
@@ -47,7 +48,8 @@ if len(result) == 0:
 			time DATETIME)''')
 	conn.commit()
 	# table created
-
+conn.close()
+logger.info("[*] Database connection setup successful!")
 
 # for storing files in pickled form
 if not os.path.exists("./datafiles"):

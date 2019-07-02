@@ -1,25 +1,62 @@
-<!doctype html>
-<title>Clustomer</title>
-<h2>Select a file to upload</h2>
-<p>
-	{% with messages = get_flashed_messages() %}
-	  {% if messages %}
-		<ul class=flashes>
-		{% for message in messages %}
-		  <li>{{ message }}</li>
-		{% endfor %}
-		</ul>
-	  {% endif %}
-	{% endwith %}
-</p>
-<form method="post" action="/" enctype="multipart/form-data">
-    <dl>
-    	<p>Upload an excel file containing data</p>
-		<p><input type="file" name="datafile" autocomplete="off" required></p>
-    	<p>Upload a standard map of KML file</p>
-		<p><input type="file" name="kmlfile" autocomplete="off" required></p>
-    </dl>
-    <p>
-		<input type="submit" value="Submit">
+<div>
+	<h2>Upload new files:</h2>
+	<p>
+		{% with messages = get_flashed_messages() %}
+		  {% if messages %}
+			<ul class=flashes>
+			{% for message in messages %}
+			  <li>{{ message }}</li>
+			{% endfor %}
+			</ul>
+		  {% endif %}
+		{% endwith %}
 	</p>
-</form>
+	<form method="post" action="/" enctype="multipart/form-data">
+    	<p>Excel customer data-file:</p>
+		<p><input type="file" name="datafile" required></p>
+    	<p>KML map data-file:</p>
+		<p><input type="file" name="kmlfile" required></p>
+	    <p><input type="submit" value="Submit"></p>
+	</form>
+</div>
+<div>
+	<h2>Select already uploaded files:</h2>
+	<form method="post" action="/">
+		<p>Select customer data-file:</p>
+		<select name="datafilename">
+		  <option value="{{data['datafilenames'][0]}}" selected>
+		  	<div>
+		  		<p>{{ data['time'][0]}}</p><br>
+			  	{{data['datafilenames'][0]}}
+		  	</div>
+		  </option>
+		  {% for i in range(1, data['length']) %}
+		    <option value="{{data['datafilenames'][i]}}">
+		    	<div>
+		    		<p>{{data['time'][i]}}</p><br>
+			    	{{data['datafilenames'][i]}}
+		    	</div>
+		    </option>
+		  {% endfor %}
+		</select>
+		<p>Select KML map data-file</p>
+		<select name="kmlfilename">
+		  <option value="{{data['kmlfilenames'][0]}}" selected>
+		  	<div>
+		  		<p>{{ data['time'][0]}}</p><br>
+			  	{{data['kmlfilenames'][0]}}
+		  	</div>
+		  </option>
+		  {% for i in range(1, data['length']) %}
+		    <option value="{{data['kmlfilenames'][i]}}">
+		    	<div>
+		    		<p>{{data['time'][i]}}</p><br>
+			    	{{data['kmlfilenames'][i]}}
+		    	</div>
+		    </option>
+		  {% endfor %}
+		</select>
+		<input type="submit" value="Submit">
+	</form>
+</div>
+

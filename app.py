@@ -1,6 +1,7 @@
 """Application"""
 
 import os
+import sqlite3
 import urllib.request
 
 import requests
@@ -11,7 +12,7 @@ from flask import (flash, request, redirect, render_template, url_for, Response)
 from flask_restful import Resource, Api
 from flask_cors import CORS, cross_origin
 
-from fact import app
+from fact import (app, logger)
 from algo import (coloring, cluster, github_wrapper)
 
 from _config import yml_data
@@ -22,51 +23,79 @@ allowed_extension = set(yml_data["allowed_extension"])
 kml_file_name = ""
 data_file_frame = None
 
+
 def allowed_file(filename):
 	return ('.' in filename) and (filename.rsplit('.', 1)[1].lower() in allowed_extension)
 
-@app.route('/')
-def upload_form():
-	return render_template('upload.html')
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=["POST", "GET"])
 def upload_file():
 	if request.method=='POST':
-		if 'datafile' not in request.files or 'kmlfile' not in request.files:
-			flash('Some file-part not submitted in form!')
-			return redirect(request.url)
+		postdata = (request.form).to_dict(flat=False)
 
-		file = request.files['datafile']
-		file2 = request.files['kmlfile']
+		if len(postdata['datafilename']) == 0:
+			# Second form: Filenames were chosen
+			kml_file_name = secure_filename(str(postdata['kmlfilename']))
+			filename = secure_filename(str(postdata['datafilename']))
 
-		if file.filename=="" or file2.filename=="":
-			flash('Null file selected for uploading!')
-			return redirect(request.url)
-
-		if (file and allowed_file(file.filename)) and (file2 and allowed_file(file2.filename)):
-			filename = secure_filename(file.filename)
-			global kml_file_name
-			kml_file_name = secure_filename(file2.filename)
-
-			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-			file2.save(os.path.join(app.config['UPLOAD_FOLDER'], kml_file_name))
-
-			flash('File(s) successfully uploaded!')
 			return redirect(url_for('select_content', filename=filename))
 		else:
-			flash("Allowed extensions are: {}".format(str(allowed_extension)))
-			return redirect(request.url)
+			# First form: New files were uploaded			
+			if 'datafile' not in request.files or 'kmlfile' not in request.files:
+				flash('Some file-part not submitted in form!')
+				return redirect(request.url)
+
+			file = request.files['datafile']
+			file2 = request.files['kmlfile']
+
+			if file.filename=="" or file2.filename=="":
+				flash('Null file selected for uploading!')
+				return redirect(request.url)
+
+			if (file and allowed_file(file.filename)) and (file2 and allowed_file(file2.filename)):
+				filename = secure_filename(file.filename)
+				global kml_file_name
+				kml_file_name = secure_filename(file2.filename)
+
+				file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+				file2.save(os.path.join(app.config['UPLOAD_FOLDER'], kml_file_name))
+
+				flash('File(s) successfully uploaded!')
+				return redirect(url_for('select_content', filename=filename))
+			else:
+				flash("Allowed extensions are: {}".format(str(allowed_extension)))
+				return redirect(request.url)
+	else:
+		conn = sqlite3.connect("./db/"+yml_data["database"]["name"])
+		cur = conn.cursor()
+		cur.execute("select * from filenames")
+		query_data = cur.fetchall()
+		conn.close()
+
+		print(query_data)
+		
+		data = {'datafilenames': [], 'kmlfilenames': [], 'time': []}
+		for r in query_data:
+			data['datafilenames'].append(r[1])
+			data['kmlfilenames'].append(r[2])
+			data['time'].append(str(r[3]).rsplit(":", 1)[0])
+		data['length'] = len(data['datafilenames'])
+
+		return render_template('upload.html', data=data)
 
 @app.route('/select/<filename>', methods=['GET', 'POST'])
 def select_content(filename):
 	if request.method=='POST':
+		print((request.args).to_dict(flat=False))
+
 		geogrid = request.form.get('geogrid')
 		column = request.form.get('column')
 		
 		return redirect(url_for('select_values', filename=filename, grid=geogrid, col=column))
 	else:
 		global data_file_frame
-		df = read_excel(filename)
+		df = read_excel(app.config['UPLOAD_FOLDER'] + "/" + filename)
+		
 		columns = list(df.columns)
 		data_file_frame = deepcopy(df)
 
@@ -75,11 +104,16 @@ def select_content(filename):
 			return redirect('/')
 
 		data = {
-		'flag': 0,
-		'selected_column': columns[0],
-		'columns': columns,
-		'selected_column_grid': columns[0]
-		}
+			'flag': 0,
+			'columns': columns,
+			'selected_column_grid': columns[0]}
+
+		try:
+			idx = columns.index('Grid')
+		except:
+			idx = 0
+		data['selected_column'] = columns[0]
+		
 		return render_template('selection.html', data=data)
 
 @app.route('/select/<filename>/<grid>/<col>/', methods=['POST', 'GET'])
@@ -163,4 +197,4 @@ def get():
 # api.add_resource(APIs, '/api/v1/out.kml')
 
 if __name__=="__main__":
-	app.run(host="0.0.0.0", port="5000")
+	app.run(host="0.0.0.0")
