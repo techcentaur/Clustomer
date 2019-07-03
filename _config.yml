@@ -1,5 +1,5 @@
 path:
-    upload_folder: '/mnt/c/Users/chawla/Ankit/Clustomer'
+    file_upload_folder: './datafiles'
 
 api:
     google_maps_js: AIzaSyCPsR-n1YeVpLQeOa4Yjp5-mJz_DuOEn78
@@ -15,3 +15,6 @@ github:
 database:
     name: datafiles.db
     table_name: filenames
+
+host:
+    url: http://localhost:5000 # with no backslash at end

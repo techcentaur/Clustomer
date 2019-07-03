@@ -13,7 +13,7 @@ from flask_cors import CORS
 if not os.path.exists("./logs"):
 	os.makedirs("./logs")
 logfile_name = (str(datetime.now())).rsplit(":", 1)[0].replace(":", "-")
-logging.basicConfig(filename="./logs/" + "{}-logfile.log".format(logfile_name), level=logging.DEBUG)
+logging.basicConfig(filename="./logs/" + "{}-logfile.log".format(logfile_name), level=logging.WARN, format='%(filename)s:%(lineno)s %(levelname)s:%(message)s')
 logger = logging.getLogger('LOG')
 
 
@@ -51,6 +51,10 @@ if len(result) == 0:
 conn.close()
 logger.info("[*] Database connection setup successful!")
 
-# for storing files in pickled form
+# for storing input files
 if not os.path.exists("./datafiles"):
 	os.makedirs("./datafiles")
+
+# for storing output files
+if not os.path.exists("./outfiles"):
+	os.makedirs("./outfiles")
