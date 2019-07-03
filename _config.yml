@@ -13,8 +13,12 @@ github:
     branch: 'master'
 
 database:
-    name: datafiles.db
-    table_name: filenames
+    inputfilesDB:
+        name: datafiles.db
+        table_name: filenames
+    outputfilesDB:
+        name: outfiles.db
+        table_name: filenames
 
 host:
     url: http://localhost:5000 # with no backslash at end

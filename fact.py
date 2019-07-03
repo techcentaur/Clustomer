@@ -13,7 +13,7 @@ from flask_cors import CORS
 if not os.path.exists("./logs"):
 	os.makedirs("./logs")
 logfile_name = (str(datetime.now())).rsplit(":", 1)[0].replace(":", "-")
-logging.basicConfig(filename="./logs/" + "{}-logfile.log".format(logfile_name), level=logging.WARN, format='%(filename)s:%(lineno)s %(levelname)s:%(message)s')
+logging.basicConfig(filename="./logs/" + "{}-logfile.log".format(logfile_name), level=logging.DEBUG, format='%(filename)s:%(lineno)s %(levelname)s:%(message)s')
 logger = logging.getLogger('LOG')
 
 
@@ -30,14 +30,14 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
-# set database connection
+# set database connection for input files
 if not os.path.exists("./db"):
 	os.makedirs("./db")
 
-conn = sqlite3.connect("./db/"+yml_data["database"]["name"])
+conn = sqlite3.connect("./db/"+yml_data["database"]["inputfilesDB"]["name"])
 ## create the table if it does not exists
 cur = conn.cursor()
-cur.execute("select name from sqlite_master where type='table' and name='"+yml_data["database"]["table_name"]+"'")
+cur.execute("select name from sqlite_master where type='table' and name='"+yml_data["database"]["inputfilesDB"]["table_name"]+"'")
 result = cur.fetchall()
 
 if len(result) == 0:
@@ -49,7 +49,32 @@ if len(result) == 0:
 	conn.commit()
 	# table created
 conn.close()
-logger.info("[*] Database connection setup successful!")
+
+logger.info("[*] Database connection setup successful for INPUT files!")
+# set database connection for output files
+
+conn = sqlite3.connect("./db/"+yml_data["database"]["outputfilesDB"]["name"])
+## create the table if it does not exists
+cur = conn.cursor()
+cur.execute("select name from sqlite_master where type='table' and name='"+yml_data["database"]["outputfilesDB"]["table_name"]+"'")
+result = cur.fetchall()
+
+if len(result) == 0:
+	cur.execute(''' create table filenames 
+			(id INTEGER PRIMARY KEY,
+			datafile TEXT NOT NULL,
+			kmlfile TEXT NOT NULL,
+			outfile TEXT NOT NULL,
+			time DATETIME)''')
+	conn.commit()
+	# table created
+conn.close()
+
+logger.info("[*] Database connection setup successful for INPUT files!")
+# set database connection for output files
+
+
+
 
 # for storing input files
 if not os.path.exists("./datafiles"):

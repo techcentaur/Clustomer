@@ -23,6 +23,7 @@ allowed_extension = set(yml_data["allowed_extension"])
 
 # Global
 kml_file_name = ""
+data_file_name = ""
 data_file_frame = None
 
 
@@ -32,7 +33,7 @@ def allowed_file(filename):
 
 @app.route('/', methods=["POST", "GET"])
 def upload_file():
-	global kml_file_name
+	global kml_file_name, data_file_name
 	if request.method=='POST':
 		postdata = (request.form).to_dict(flat=False)
 
@@ -40,6 +41,7 @@ def upload_file():
 			# Second form: Filenames were chosen
 			kml_file_name = secure_filename(str(postdata['kmlfilename']))
 			filename = secure_filename(str(postdata['datafilename']))
+			data_file_name = filename
 
 			return redirect(url_for('select_content', filename=filename))
 		else:
@@ -58,13 +60,14 @@ def upload_file():
 			if (file and allowed_file(file.filename)) and (file2 and allowed_file(file2.filename)):
 				filename = secure_filename(file.filename)
 				kml_file_name = secure_filename(file2.filename)
+				data_file_name = filename
 
 				file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 				file2.save(os.path.join(app.config['UPLOAD_FOLDER'], kml_file_name))
 				logger.warn("[.] File names securely parsed, and files saved in configured directory")
 
 				# registering in data base
-				conn = sqlite3.connect("./db/" + yml_data["database"]["name"])
+				conn = sqlite3.connect("./db/" + yml_data["database"]["inputfilesDB"]["name"])
 				cur = conn.cursor()
 				cur.execute("insert into filenames values (null, ?, ?, ?)", (filename, kml_file_name, datetime.now(), ))
 				conn.commit()
@@ -77,7 +80,7 @@ def upload_file():
 				flash("Allowed extensions are: {}".format(str(allowed_extension)))
 				return redirect(request.url)
 	else:
-		conn = sqlite3.connect("./db/" + yml_data["database"]["name"])
+		conn = sqlite3.connect("./db/" + yml_data["database"]["inputfilesDB"]["name"])
 		cur = conn.cursor()
 		cur.execute("select * from filenames")
 		query_data = cur.fetchall()
@@ -165,20 +168,33 @@ def select_values(filename, grid, col):
 
 @app.route('/result_page/<out_file_name>', methods=["GET"])
 def result_page(out_file_name):
+	global kml_file_name, data_file_name
+
+	try:
+		if request.args.get('to_save') == 'true':
+			conn = sqlite3.connect("./db/" + yml_data["database"]["outputfilesDB"]["name"])
+			cur = conn.cursor()
+			cur.execute("insert into filenames values (null, ?, ?, ?, ?)", (data_file_name, kml_file_name, datetime.now(), out_file_name,))
+			conn.commit()
+			conn.close()
+	except:
+		logger.critical("[!] Cannot save the outfile")
+
 	download_url = yml_data["host"]["url"] + "/api/v1/" + out_file_name
+	save_url = yml_data["host"]["url"] + "/result_page/" + out_file_name + "?to_save=true"
+	
 	data = {
 		"download_url": download_url,
-		"out_file_name": out_file_name
+		"out_file_name": out_file_name,
+		"save_url": save_url
 	}
+
 
 	return render_template('result.html', data=data)
 
 
 @app.route('/kml_viewer/<out_file_name>', methods=["GET"])
 def show_kml(out_file_name):
-	logger.debug("""[#] Google Maps API use kml file on a public server:
-		By-passing it through GitHub raw user content:""")
-
 	data={
         "user": yml_data["github"]["handle"],
         "password": yml_data["github"]["password"],
@@ -188,17 +204,39 @@ def show_kml(out_file_name):
         "commit_message": None,
 	}
 
+	github_url = "https://raw.githubusercontent.com/"+data["user"]+"/"+data["repo"]+"/"+data["branch"]+"/"+out_file_name
+	api_url = "https://maps.googleapis.com/maps/api/js?key="+ yml_data["api"]["google_maps_js"] +"&callback=initMap"
+	download_url = yml_data["host"]["url"] + "/api/v1/" + out_file_name
+	save_url = yml_data["host"]["url"] + "/kml_viewer/" + out_file_name + "?to_save=true"
+	
+	payload = {
+		"github_url": github_url,
+		"api_url": api_url,
+		"download_url": download_url,
+		"save_url": save_url
+	}
+	
+	try:
+		if request.args.get('to_save') == 'true':
+			conn = sqlite3.connect("./db/" + yml_data["database"]["outputfilesDB"]["name"])
+			cur = conn.cursor()
+			cur.execute("insert into filenames values (null, ?, ?, ?, ?)", (data_file_name, kml_file_name, datetime.now(), out_file_name,))
+			conn.commit()
+			conn.close()
+
+			return render_template('display.html', data=payload)
+	except:
+		logger.critical("[!] Cannot save the outfile")
+
+	logger.debug("""[#] Google Maps API use kml file on a public server:
+	By-passing it through GitHub raw user content:""")
 
 	logger.info("[*] Posting KML via GitHub api")
 	logger.debug("[*] Data {}\n".format(str(data)))
 
 	github_wrapper.post_on_github(data, logger)
 
-	github_url = "https://raw.githubusercontent.com/"+data["user"]+"/"+data["repo"]+"/"+data["branch"]+"/"+out_file_name
-	api_url = "https://maps.googleapis.com/maps/api/js?key="+ yml_data["api"]["google_maps_js"] +"&callback=initMap"
-	download_url = yml_data["host"]["url"] + "/api/v1/" + out_file_name
-
-	return render_template('display.html', github_url=github_url, api_url=api_url, download_url=download_url)
+	return render_template('display.html', data=payload)
 
 # api = Api(app)
 
