@@ -59,4 +59,25 @@
 		<input type="submit" value="Submit">
 	</form>
 </div>
-
+<div>
+	<h2>Select already analysed KML files</h2>
+	<form method="post" action="/">
+		<select name="outfilefromdb">
+		  <option value="{{data['ofnames'][0]}}" selected>
+		  	<div>
+		  		<p>{{ data['time'][0]}}</p><br>
+			  	{{data['ofnames'][0]}}
+		  	</div>
+		  </option>
+		  {% for i in range(1, data['olength']) %}
+		    <option value="{{data['ofnames'][i]}}">
+		    	<div>
+		    		<p>{{data['time'][i]}}</p><br>
+			    	{{data['ofnames'][i]}}
+		    	</div>
+		    </option>
+		  {% endfor %}
+		</select>
+		<input type="submit" value="Submit">
+	</form>
+</div>

@@ -36,7 +36,6 @@ def upload_file():
 	global kml_file_name, data_file_name
 	if request.method=='POST':
 		postdata = (request.form).to_dict(flat=False)
-
 		if 'datafilename' in postdata:
 			# Second form: Filenames were chosen
 			kml_file_name = secure_filename(str(postdata['kmlfilename']))
@@ -44,6 +43,10 @@ def upload_file():
 			data_file_name = filename
 
 			return redirect(url_for('select_content', filename=filename))
+		elif 'outfilefromdb' in postdata:
+			ofname = secure_filename(str(postdata['outfilefromdb']))
+			return redirect(url_for('result_page', out_file_name=ofname))
+
 		else:
 			# First form: New files were uploaded			
 			if 'datafile' not in request.files or 'kmlfile' not in request.files:
@@ -86,12 +89,23 @@ def upload_file():
 		query_data = cur.fetchall()
 		conn.close()
 		
-		data = {'datafilenames': [], 'kmlfilenames': [], 'time': []}
+		conn = sqlite3.connect("./db/" + yml_data["database"]["outputfilesDB"]["name"])
+		cur = conn.cursor()
+		cur.execute("select * from filenames")
+		query_data_2 = cur.fetchall()
+		conn.close()
+		
+		data = {'datafilenames': [], 'kmlfilenames': [], 'time': [], 'ofnames': []}
 		for r in query_data:
 			data['datafilenames'].append(r[1])
 			data['kmlfilenames'].append(r[2])
 			data['time'].append(str(r[3]).rsplit(":", 1)[0])
+
+		for r in query_data_2:
+			data['ofnames'].append(r[3])
+
 		data['length'] = len(data['datafilenames'])
+		data['olength'] = len(data['ofnames'])
 
 		return render_template('upload.html', data=data)
 
@@ -174,7 +188,7 @@ def result_page(out_file_name):
 		if request.args.get('to_save') == 'true':
 			conn = sqlite3.connect("./db/" + yml_data["database"]["outputfilesDB"]["name"])
 			cur = conn.cursor()
-			cur.execute("insert into filenames values (null, ?, ?, ?, ?)", (data_file_name, kml_file_name, datetime.now(), out_file_name,))
+			cur.execute("insert into filenames values (null, ?, ?, ?, ?)", (data_file_name, kml_file_name, out_file_name, datetime.now()))
 			conn.commit()
 			conn.close()
 	except:
@@ -188,7 +202,6 @@ def result_page(out_file_name):
 		"out_file_name": out_file_name,
 		"save_url": save_url
 	}
-
 
 	return render_template('result.html', data=data)
 
@@ -220,7 +233,7 @@ def show_kml(out_file_name):
 		if request.args.get('to_save') == 'true':
 			conn = sqlite3.connect("./db/" + yml_data["database"]["outputfilesDB"]["name"])
 			cur = conn.cursor()
-			cur.execute("insert into filenames values (null, ?, ?, ?, ?)", (data_file_name, kml_file_name, datetime.now(), out_file_name,))
+			cur.execute("insert into filenames values (null, ?, ?, ?, ?)", (data_file_name, kml_file_name, out_file_name, datetime.now(),))
 			conn.commit()
 			conn.close()
 
