@@ -32,10 +32,11 @@ def allowed_file(filename):
 
 @app.route('/', methods=["POST", "GET"])
 def upload_file():
+	global kml_file_name
 	if request.method=='POST':
 		postdata = (request.form).to_dict(flat=False)
 
-		if len(postdata['datafilename']) == 0:
+		if 'datafilename' in postdata:
 			# Second form: Filenames were chosen
 			kml_file_name = secure_filename(str(postdata['kmlfilename']))
 			filename = secure_filename(str(postdata['datafilename']))
@@ -56,7 +57,6 @@ def upload_file():
 
 			if (file and allowed_file(file.filename)) and (file2 and allowed_file(file2.filename)):
 				filename = secure_filename(file.filename)
-				global kml_file_name
 				kml_file_name = secure_filename(file2.filename)
 
 				file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -66,7 +66,7 @@ def upload_file():
 				# registering in data base
 				conn = sqlite3.connect("./db/" + yml_data["database"]["name"])
 				cur = conn.cursor()
-				cur.execute("insert into filenames values (null, ?, ?, ?)", (filename, kml_file_name, datetime.datetime.now(), ))
+				cur.execute("insert into filenames values (null, ?, ?, ?)", (filename, kml_file_name, datetime.now(), ))
 				conn.commit()
 				conn.close()
 				logger.info("[.] Entry registered in data-base!")
@@ -82,8 +82,6 @@ def upload_file():
 		cur.execute("select * from filenames")
 		query_data = cur.fetchall()
 		conn.close()
-
-		print(query_data)
 		
 		data = {'datafilenames': [], 'kmlfilenames': [], 'time': []}
 		for r in query_data:
@@ -97,8 +95,6 @@ def upload_file():
 @app.route('/select/<filename>', methods=['GET', 'POST'])
 def select_content(filename):
 	if request.method=='POST':
-		print((request.args).to_dict(flat=False))
-
 		geogrid = request.form.get('geogrid')
 		column = request.form.get('column')
 		
@@ -117,13 +113,13 @@ def select_content(filename):
 		data = {
 			'flag': 0,
 			'columns': columns,
-			'selected_column_grid': columns[0]}
+			'selected_column': columns[0]}
 
 		try:
 			idx = columns.index('Grid')
 		except:
 			idx = 0
-		data['selected_column'] = columns[0]
+		data['selected_column_grid'] = columns[idx]
 		
 		return render_template('selection.html', data=data)
 
@@ -149,7 +145,7 @@ def select_values(filename, grid, col):
 		logic = cluster.Logic(data["data_file_path"], query, logger)
 		c = coloring.ColorKML(data, logger=logger, logic=logic, process=True)
 
-		return redirect(url_for('result_page'))
+		return redirect(url_for('result_page', out_file_name=c.get_saved_outfile_name()))
 	else:
 		columns = list(data_file_frame.columns)
 
@@ -167,40 +163,50 @@ def select_values(filename, grid, col):
 
 		return render_template('selection.html', data=data)
 
-@app.route('/result_page', methods=["GET"])
-def result_page():
-	url = "http://localhost:5000/api/v1/out.kml"
+@app.route('/result_page/<out_file_name>', methods=["GET"])
+def result_page(out_file_name):
+	download_url = yml_data["host"]["url"] + "/api/v1/" + out_file_name
 	data = {
-		"url": url
+		"download_url": download_url,
+		"out_file_name": out_file_name
 	}
+
 	return render_template('result.html', data=data)
 
 
-@app.route('/kml_viewer', methods=["GET"])
-def show_kml():
+@app.route('/kml_viewer/<out_file_name>', methods=["GET"])
+def show_kml(out_file_name):
+	logger.debug("""[#] Google Maps API use kml file on a public server:
+		By-passing it through GitHub raw user content:""")
+
 	data={
         "user": yml_data["github"]["handle"],
         "password": yml_data["github"]["password"],
         "repo": yml_data["github"]["repo"],
         "branch": yml_data["github"]["branch"],
-        "to_be_uploaded_file_list": ["./output_file.kml"],
+        "to_be_uploaded_file_list": ["./outfiles/" + out_file_name],
         "commit_message": None,
-        "verbose": True,
 	}
-	print(data)
 
-	github_wrapper.post_on_github(data)
-	url = "https://raw.githubusercontent.com/"+data["user"]+"/"+data["repo"]+"/"+data["branch"]+"/"+"output_file.kml"
 
-	return render_template('display.html', github_url=url, api=yml_data["api"]["google_maps_js"])
+	logger.info("[*] Posting KML via GitHub api")
+	logger.debug("[*] Data {}\n".format(str(data)))
+
+	github_wrapper.post_on_github(data, logger)
+
+	github_url = "https://raw.githubusercontent.com/"+data["user"]+"/"+data["repo"]+"/"+data["branch"]+"/"+out_file_name
+	api_url = "https://maps.googleapis.com/maps/api/js?key="+ yml_data["api"]["google_maps_js"] +"&callback=initMap"
+	download_url = yml_data["host"]["url"] + "/api/v1/" + out_file_name
+
+	return render_template('display.html', github_url=github_url, api_url=api_url, download_url=download_url)
 
 # api = Api(app)
 
 # class APIs(Resource):
-@app.route('/api/v1/out.kml', methods=["GET"])
-def get():
+@app.route('/api/v1/<filename>', methods=["GET"])
+def get(filename):
 	headers = {'Content-Type': 'text/xml'}
-	with open("./output_file.kml") as kml:
+	with open("./outfiles/" + filename) as kml:
 		data = kml.read()
 
 	resp = Response(response=data, status=200, mimetype="application/vnd.google-earth.kml+xml")
