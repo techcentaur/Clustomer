@@ -4,10 +4,10 @@
 </head>
 <body>
 	<div>
-		<a href="{{data['url']}}">Download the kml file</a>
+		<a href="{{data['download_url']}}">Download the kml file</a>
 	</div>
 	<div>
-		<a href="{{ url_for('kml_viewer') }}">View KML file in Google Maps</a>
+		<a href="{{ url_for('show_kml', out_file_name=data['out_file_name']) }}">View KML file in Google Maps</a>
 	</div>
 </body>
 </html>
