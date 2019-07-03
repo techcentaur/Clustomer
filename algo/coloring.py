@@ -14,14 +14,15 @@ class ColorKML:
 		params:
 		"""
 
-		self.logger.info("[*] Running ColorKML class with process=True \n {}".format(str(self.__repr__)))
-
 		self.kml_file_path = params["kml_file_path"]
 		self.data_file_path = params["data_file_path"]
 		self.number_of_clusters = params["number_of_clusters"]
 
 		self.logger = logger
 		self.logic = logic 
+
+		self.logger.info("[*] Running ColorKML class with process=True \n {}".format(str(self.__repr__)))
+		self.out_kml_file_path = "./outfiles/" + "updated_" + params["kml_file_path"].rsplit("/", 1)[1]
 
 		if process:
 			self.logger.info("[*] Coloring the map:")
@@ -32,7 +33,12 @@ class ColorKML:
 				string += "\n".join(self.biglist[key])
 				string += "\n"
 
-			self.save_file(string, "./output_file.kml")
+			self.logger.info("[*] Saving the output file with name: {}".format(self.out_kml_file_path))
+			self.save_file(string, self.out_kml_file_path)
+
+	def get_saved_outfile_name(self):
+		return "updated_" + self.kml_file_path.rsplit("/", 1)[1]
+
 
 	def __repr__(self):
 		string = "\n"
@@ -110,7 +116,7 @@ class ColorKML:
 					break
 
 		except Exception as e:
-			print("[!] Exception Occured: {}".format(e))
+			self.logger.critical("[!] Exception Occured: {}".format(e))
 			return False
 
 		return True
@@ -129,7 +135,7 @@ class ColorKML:
 			with open(out_file_name, 'w') as f:
 				f.write(kml_string)
 		except Exception as e:
-			print("[!] Exception Occured: {}".format(e))
+			self.logger.critical("[!] Exception Occured: {}".format(e))
 			return False
 		return True
 

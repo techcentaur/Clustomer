@@ -1,10 +1,12 @@
 "GitHub Wrapper for File Upload"
 
 import base64
+import logging
+
 from github import (Github, InputGitTreeElement)
 from random import randint
 
-def post_on_github(params):
+def post_on_github(params, logger=None):
     """ @params: A dictionary with keys:
         user: GitHub handle,
         password: Password without encryption,
@@ -15,9 +17,8 @@ def post_on_github(params):
         verbose: Verbose (default False)
     """
 
-    try:
-        if params["verbose"]:
-            print("[*] Trying to upload file(s) {f} in {r} for handle {h}".format(f=params["to_be_uploaded_file_list"], r=params["repo"], h=params["user"]))
+    try:        
+        logger.debug("[*] Trying to upload file(s) {f} in {r} for handle {h}".format(f=params["to_be_uploaded_file_list"], r=params["repo"], h=params["user"]))
 
         g = Github(params["user"], params["password"])
 
@@ -47,10 +48,8 @@ def post_on_github(params):
         commit = repo.create_git_commit(commit_message, tree, [parent])
         master_ref.edit(commit.sha)
     except Exception as e:
-        print("Exception: {}".format(e))
+        logger.critical("Exception: {}".format(e))
         return False
 
-    if params["verbose"]:
-        print("[*] Uploading successful!")
-
+    logger.info("[*] Uploading successful!")
     return True
