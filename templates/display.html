@@ -17,7 +17,7 @@
     </style>
     <script type="text/javascript">
 
-    var bigurl = '{{github_url|safe}}';
+    var bigurl = '{{data["github_url"]|safe}}';
 
     function initMap() {
       var map = new google.maps.Map(document.getElementById('map'), {
@@ -35,10 +35,13 @@
   <body>
 <div id="map"></div>
 <div>
-  <a href="{{ download_url | safe}}"><p>Download kml file from here</p></a>
+  <a href="{{ data['download_url'] | safe}}"><p>Download kml file from here</p></a>
+</div>
+<div>
+  <a href="{{ data['save_url'] | safe }}">Save this KML file</a>
 </div>
 <!-- Replace the value of the key parameter with your own API key. -->
-<script async defer src="{{ api_url | safe }}">
+<script async defer src="{{ data['api_url'] | safe }}">
 </script>
   </body>
 </html>
