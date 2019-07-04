@@ -26,9 +26,51 @@
 	<input type="submit" value="Submit">
 </form>
 
-{% if data['flag'] == 1%}
+<!-- This will be for the choice of range or selection -->
+{% if data['flag'] >= 1%}
+<form method="post">
+	<p>Do you want to select some choices, or choose a range?</p>
+	<select name="choice">
+	{% if data['selected_choice'] == "discrete" %}
+	    <input type="checkbox" name="discrete" value="discrete" checked/>Discrete Values<br>
+	{% else %}
+	    <input type="checkbox" name="discrete" value="discrete"/>Discrete Values<br>
+	{% endif %}
+
+	{% if data['selected_choice'] == "range" %}
+	    <input type="checkbox" name="range" value="range" checked/>Range<br>
+	{% else %}
+	    <input type="checkbox" name="range" value="range"/>Range<br>
+	{% endif %}
+
+	</select>
+	<input type="submit" value="Submit">
+</form>
+{% endif %}
+
+<!-- This will be for doing subsequent action -->
+{% if data['selected_choice']=='range'%}
 <form method="post">
 	<p>Select a value of which you want to form clusters of</p>
+	<select name="from_range">
+	  {% for v in data['from_range'] %}
+	    <option value="{{v}}">{{v}}</option>
+	  {% endfor %}
+	</select>
+
+	</select>
+	<select name="to_range">
+	  {% for v in data['from_range'] %}
+	    <option value="{{v}}">{{v}}</option>
+	  {% endfor %}
+	</select>
+	<p>Enter number of clusters: </p>
+	<input type="text" name="num_clusters">
+	<input type="submit" value="Submit">
+</form>
+{% elif data['selected_choice']=='discrete' %}
+<form method="post">
+	<p>Select one (or more) value(s) of which you want to form clusters of</p>
 	<select name="val">
 	  {% for v in data['col_values'] %}
 	    <input type="checkbox" name="{{v}}" value="{{v}}"/>{{v}}<br>

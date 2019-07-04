@@ -5,9 +5,10 @@ import sqlite3
 import urllib.request
 
 import requests
+import datetime
+
 from copy import deepcopy
 from pandas import read_excel
-from datetime import datetime
 
 from werkzeug.utils import secure_filename
 from flask import (flash, request, redirect, render_template, url_for, Response)
@@ -72,7 +73,7 @@ def upload_file():
 				# registering in data base
 				conn = sqlite3.connect("./db/" + yml_data["database"]["inputfilesDB"]["name"])
 				cur = conn.cursor()
-				cur.execute("insert into filenames values (null, ?, ?, ?)", (filename, kml_file_name, datetime.now(), ))
+				cur.execute("insert into filenames values (null, ?, ?, ?)", (filename, kml_file_name, datetime.datetime.now(), ))
 				conn.commit()
 				conn.close()
 				logger.info("[.] Entry registered in data-base!")
@@ -143,28 +144,76 @@ def select_content(filename):
 @app.route('/select/<filename>/<grid>/<col>/', methods=['POST', 'GET'])
 def select_values(filename, grid, col):
 	global data_file_frame
+	columns = list(data_file_frame.columns)
 	if request.method=='POST':
-		clusters = request.form.get('num_clusters')
-		logger.debug("[*] {c} column selected: With {i} number of clusters to form:".format(c=col, i=clusters))
+		post_vars = request.form.to_dict()
+		if ('range' in post_vars) or ('discrete' in post_vars):
+			selected_choice = 'range' if 'range' in post_vars else 'discrete'
+			data = {
+			'flag': 2,
+			'selected_column': col,
+			'columns': columns,
+			'selected_column_grid': grid,
+			'selected_choice': selected_choice
+			}
+			print(col)
+			if data['selected_choice'] == "range":
+				try:
+					if isinstance(data_file_frame[col][0], datetime.date):
+						data['from_range'] = sorted(data_file_frame[col], key=lambda d:tuple(map(int, str(d.date()).split("-"))))
+						data['from_range'] = [str(x) for x in data['from_range']]
+						return render_template('selection.html', data=data)
+					elif isinstance(data_file_frame[col][0], datetime.time):
+						data['from_range'] = sorted(data_file_frame[col], key=lambda d:tuple(map(int, str(d).split(":"))))
+						data['from_range'] = [str(x) for x in data['from_range']]
+						return render_template('selection.html', data=data)
+					else:
+						data['col_values'] = set(list(data_file_frame[col]))
+						data['selected_choice'] = 'discrete'
+						return render_template('selection.html', data=data)
+				except Exception as e:
+					logger.error("[!] Exception raised: {}", e)
+					return render_template('selection.html', data=data)
+			else:
+				data['col_values'] = set(list(data_file_frame[col]))
+				return render_template('selection.html', data=data)
+		else:
+			clusters = request.form.get('num_clusters')
+			logger.debug("[*] {c} column selected: With {i} number of clusters to form:".format(c=col, i=clusters))
 
-		data={
-			"data_file_path": app.config['UPLOAD_FOLDER'] + "/" + filename,
-			"kml_file_path": app.config['UPLOAD_FOLDER'] + "/" + kml_file_name,
-			"number_of_clusters": int(clusters)
-		}
+			data={
+				"data_file_path": app.config['UPLOAD_FOLDER'] + "/" + filename,
+				"kml_file_path": app.config['UPLOAD_FOLDER'] + "/" + kml_file_name,
+				"number_of_clusters": int(clusters)
+			}
 
-		val = []
-		for i in set(list(data_file_frame[col])):
-			if request.form.get(str(i)):
-				val.append(i)
-		query = {col: val}
+			if 'from_range' in request.form.to_dict():
+				# query with range
+				if isinstance(data_file_frame[col][0], datetime.date):
+					_from = request.form.get('from_range')
+					_to = request.form.get('to_range')
+					__from = datetime.datetime.strptime(_from, "%Y-%m-%d %H:%M:%S").date()
+					__to = datetime.datetime.strptime(_to, "%Y-%m-%d %H:%M:%S").date()
+					query = {'type': 'date', 'from': __from, 'to': __to, 'col': col}
+				elif isinstance(data_file_frame[col][0], datetime.time):
+					_from = request.form.get('from_range')
+					_to = request.form.get('to_range')
+					__from = datetime.datetime.strptime(_from, "%H:%M:%S").time()
+					__to = datetime.datetime.strptime(_to, "%H:%M:%S").time()
+					query = {'type': 'time', 'from': __from, 'to': __to, 'col': col}
+			else:
+				# query with selected
+				val = []
+				for i in set(list(data_file_frame[col])):
+					if request.form.get(str(i)):
+						val.append(i)
+				query = {col: val, 'type': 'discrete'}
 
-		logic = cluster.Logic(data["data_file_path"], query, logger)
-		c = coloring.ColorKML(data, logger=logger, logic=logic, process=True)
+			logic = cluster.Logic(data["data_file_path"], query, logger)
+			c = coloring.ColorKML(data, logger=logger, logic=logic, process=True)
 
-		return redirect(url_for('result_page', out_file_name=c.get_saved_outfile_name()))
+			return redirect(url_for('result_page', out_file_name=c.get_saved_outfile_name()))
 	else:
-		columns = list(data_file_frame.columns)
 
 		if len(columns) == 0:
 			flash('File has not data! Please enter a file with data')
@@ -175,7 +224,8 @@ def select_values(filename, grid, col):
 		'selected_column': col,
 		'columns': columns,
 		'selected_column_grid': grid,
-		'col_values': set(list(data_file_frame[col]))
+		'col_values': set(list(data_file_frame[col])),
+		'selected_choice': ""
 		}
 
 		return render_template('selection.html', data=data)
@@ -188,7 +238,7 @@ def result_page(out_file_name):
 		if request.args.get('to_save') == 'true':
 			conn = sqlite3.connect("./db/" + yml_data["database"]["outputfilesDB"]["name"])
 			cur = conn.cursor()
-			cur.execute("insert into filenames values (null, ?, ?, ?, ?)", (data_file_name, kml_file_name, out_file_name, datetime.now()))
+			cur.execute("insert into filenames values (null, ?, ?, ?, ?)", (data_file_name, kml_file_name, out_file_name, datetime.datetime.now()))
 			conn.commit()
 			conn.close()
 	except:
@@ -233,7 +283,7 @@ def show_kml(out_file_name):
 		if request.args.get('to_save') == 'true':
 			conn = sqlite3.connect("./db/" + yml_data["database"]["outputfilesDB"]["name"])
 			cur = conn.cursor()
-			cur.execute("insert into filenames values (null, ?, ?, ?, ?)", (data_file_name, kml_file_name, out_file_name, datetime.now(),))
+			cur.execute("insert into filenames values (null, ?, ?, ?, ?)", (data_file_name, kml_file_name, out_file_name, datetime.datetime.now(),))
 			conn.commit()
 			conn.close()
 

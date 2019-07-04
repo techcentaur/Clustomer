@@ -120,9 +120,7 @@ class Logic:
 		else:
 			pass
 
-		self.string = self.get_query_string(query)
-		self.logger.debug("[*] Data-frame query formed for selected column as {}".format(query))
-
+		self.query = query
 
 	def get_query_string(self, query):
 		string = ""
@@ -136,8 +134,17 @@ class Logic:
 		return string
 
 	def get_data_frame(self, string=None):
-		if not string:
-			string = self.string
+		query = self.query
 
-		return self.df.query(string)
-		
+		if query['type'] == 'discrete':
+			return self.df.query(string)
+		elif query['type'] == 'date':
+			print(":Date")
+			return self.df[(self.df[query['col']] >= query['from']) & (self.df[query['col']] <= query['to'])]
+		elif query['type'] == 'time':
+			print(":Time")
+			return self.df[(self.df[query['col']] >= query['from']) & (self.df[query['col']] <= query['to'])]		
+		else:
+			return self.df
+			
+
