@@ -1,87 +1,153 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Selection</title>
-</head>
+{% extends 'layout.html' %}
 
-<body>
-<form method="post">
-	<p>Select the column of the final grid</p>
-	<select name="geogrid">
-	  <option value="{{data['selected_column_grid']}}" selected>{{data['selected_column_grid']}}</option>
-	  {% for col in data['columns'][1:] %}
-	    <option value="{{col}}">{{col}}</option>
-	  {% endfor %}
-	</select>
-	
-	<p>Select a column on the basis of which you want to cluster</p>
-	<select name="column">
-	  <option value="{{data['selected_column']}}" selected>{{data['selected_column']}}</option>
-	  {% for col in data['columns'][1:] %}
-	    <option value="{{col}}">{{col}}</option>
-	  {% endfor %}
-	</select>
+{% block content %}
+<div class="container">
+	<form method="post">
+		<div class="form-group">
+			<div class="row">
+				<div class="col-md-3">
+					<label>Select the column of the final grid</label>
+				</div>
+				<div class="col-md-4">
+					<select name="geogrid" id="geogrid">
+						<option value="{{data['selected_column_grid']}}" selected>{{data['selected_column_grid']}}
+						</option>
+						{% for col in data['columns'][1:] %}
+						<option value="{{col}}">{{col}}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
 
-	<input type="submit" value="Submit">
-</form>
+		</div>
+		<div class="form-group">
+			<div class="row">
+				<div class="col-md-3">
+					<label>Select a column on the basis of which you want to cluster </label>
+				</div>
+				<div class="col-md-4">
+					<select name="column" id="column">
+						<option value="{{data['selected_column']}}" selected>{{data['selected_column']}}</option>
+						{% for col in data['columns'][1:] %}
+						<option value="{{col}}">{{col}}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+		</div>
+		<button type="submit" class="btn btn-default">Submit</button>
+	</form>
 
-<!-- This will be for the choice of range or selection -->
-{% if data['flag'] >= 1%}
-<form method="post">
-	<p>Do you want to select some choices, or choose a range?</p>
-	<select name="choice">
-	{% if data['selected_choice'] == "discrete" %}
-	    <input type="checkbox" name="discrete" value="discrete" checked/>Discrete Values<br>
-	{% else %}
-	    <input type="checkbox" name="discrete" value="discrete"/>Discrete Values<br>
+	<!-- This will be for the choice of range or selection -->
+	{% if data['flag'] >= 1%}
+	<form method="post">
+		<div class="form-group">
+			<div class="row">
+				<div class="col-md-3">
+					<label>Do you want to select some choices, or choose a range?</label>
+				</div>
+				<div class="col-md-4">
+					{% if data['selected_choice'] == "discrete" %}
+					<input type="checkbox" name="discrete" value="discrete" checked />Discrete Values<br>
+					{% else %}
+					<input type="checkbox" name="discrete" value="discrete" />Discrete Values<br>
+					{% endif %}
+
+					{% if data['selected_choice'] == "range" %}
+					<input type="checkbox" name="range" value="range" checked />Range<br>
+					{% else %}
+					<input type="checkbox" name="range" value="range" />Range<br>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<button type="submit" class="btn btn-default">Submit</button>
+
+	</form>
 	{% endif %}
 
-	{% if data['selected_choice'] == "range" %}
-	    <input type="checkbox" name="range" value="range" checked/>Range<br>
-	{% else %}
-	    <input type="checkbox" name="range" value="range"/>Range<br>
+	<!-- This will be for doing subsequent action -->
+	{% if data['selected_choice']=='range'%}
+	<form method="post">
+		<div class="form-group">
+			<div class="row">
+				<div class="col-md-3">
+					<label>Select a value of which you want to form clusters of</label>
+				</div>
+				<div class="col-md-4">
+					<select name="from_range" id="from_range">
+						{% for v in data['from_range'] %}
+						<option value="{{v}}">{{v}}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="row">
+					<div class="col-md-3">
+						<label>
+								Select range
+						</label>
+					</div>
+					<div class="col-md-4">
+						<select name="to_range" id="to_range">
+							{% for v in data['from_range'] %}
+							<option value="{{v}}">{{v}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="row">
+				<div class="col-md-3">
+					<label>Enter number of clusters </label>
+
+				</div>
+				<div class="col-md-4">
+					<input type="text" name="num_clusters">
+				</div>
+			</div>
+		</div>
+
+		<button type="submit" class="btn btn-default">Submit</button>
+	</form>
+	{% elif data['selected_choice']=='discrete' %}
+	<form method="post">
+		<div class="form-group">
+			<div class="row">
+				<div class="col-md-3">
+					<label>
+						Select one (or more) value(s) of which you want to form clusters of
+					</label>
+				</div>
+				<div class="col-md-4">
+					<select name="val" id="val">
+						{% for v in data['col_values'] %}
+						<input type="checkbox" name="{{v}}" value="{{v}}" />{{v}}<br>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="row">
+				<div class="col-md-3">
+					<label>
+						Enter number of clusters:
+					</label>
+				</div>
+				<div class="col-md-4">
+					<input type="text" name="num_clusters" class="form-control">
+				</div>
+			</div>
+		</div>
+		<button type="submit" class="btn btn-default">Submit</button>
+	</form>
 	{% endif %}
 
 	</select>
-	<input type="submit" value="Submit">
-</form>
-{% endif %}
+</div>
 
-<!-- This will be for doing subsequent action -->
-{% if data['selected_choice']=='range'%}
-<form method="post">
-	<p>Select a value of which you want to form clusters of</p>
-	<select name="from_range">
-	  {% for v in data['from_range'] %}
-	    <option value="{{v}}">{{v}}</option>
-	  {% endfor %}
-	</select>
-
-	</select>
-	<select name="to_range">
-	  {% for v in data['from_range'] %}
-	    <option value="{{v}}">{{v}}</option>
-	  {% endfor %}
-	</select>
-	<p>Enter number of clusters: </p>
-	<input type="text" name="num_clusters">
-	<input type="submit" value="Submit">
-</form>
-{% elif data['selected_choice']=='discrete' %}
-<form method="post">
-	<p>Select one (or more) value(s) of which you want to form clusters of</p>
-	<select name="val">
-	  {% for v in data['col_values'] %}
-	    <input type="checkbox" name="{{v}}" value="{{v}}"/>{{v}}<br>
-	  {% endfor %}
-	</select>
-	<p>Enter number of clusters: </p>
-	<input type="text" name="num_clusters">
-	<input type="submit" value="Submit">
-</form>
-{% endif %}
-
-</select>
-</body>
-</html>
+{% endblock %}
