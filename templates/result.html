@@ -1,8 +1,8 @@
-<html>
-<head>
-	<title>Result</title>
-</head>
-<body>
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="container">
 	<div>
 		<a href="{{data['download_url']}}">Download the kml file</a>
 	</div>
@@ -12,5 +12,6 @@
 	<div>
 		<a href="{{ data['save_url'] }}">Save this KML file</a>
 	</div>
-</body>
-</html>
+</div>
+
+{% endblock %}
