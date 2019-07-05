@@ -1,83 +1,174 @@
-<div>
-	<h2>Upload new files:</h2>
-	<p>
-		{% with messages = get_flashed_messages() %}
-		  {% if messages %}
-			<ul class=flashes>
-			{% for message in messages %}
-			  <li>{{ message }}</li>
-			{% endfor %}
-			</ul>
-		  {% endif %}
-		{% endwith %}
-	</p>
-	<form method="post" action="/" enctype="multipart/form-data">
-    	<p>Excel customer data-file:</p>
-		<p><input type="file" name="datafile" required></p>
-    	<p>KML map data-file:</p>
-		<p><input type="file" name="kmlfile" required></p>
-	    <p><input type="submit" value="Submit"></p>
-	</form>
-</div>
-<div>
-	<h2>Select already uploaded files:</h2>
-	<form method="post" action="/">
-		<p>Select customer data-file:</p>
-		<select name="datafilename">
-		  <option value="{{data['datafilenames'][0]}}" selected>
-		  	<div>
-		  		<p>{{ data['time'][0]}}</p><br>
-			  	{{data['datafilenames'][0]}}
-		  	</div>
-		  </option>
-		  {% for i in range(1, data['length']) %}
-		    <option value="{{data['datafilenames'][i]}}">
-		    	<div>
-		    		<p>{{data['time'][i]}}</p><br>
-			    	{{data['datafilenames'][i]}}
-		    	</div>
-		    </option>
-		  {% endfor %}
-		</select>
-		<p>Select KML map data-file</p>
-		<select name="kmlfilename">
-		  <option value="{{data['kmlfilenames'][0]}}" selected>
-		  	<div>
-		  		<p>{{ data['time'][0]}}</p><br>
-			  	{{data['kmlfilenames'][0]}}
-		  	</div>
-		  </option>
-		  {% for i in range(1, data['length']) %}
-		    <option value="{{data['kmlfilenames'][i]}}">
-		    	<div>
-		    		<p>{{data['time'][i]}}</p><br>
-			    	{{data['kmlfilenames'][i]}}
-		    	</div>
-		    </option>
-		  {% endfor %}
-		</select>
-		<input type="submit" value="Submit">
-	</form>
-</div>
-<div>
-	<h2>Select already analysed KML files</h2>
-	<form method="post" action="/">
-		<select name="outfilefromdb">
-		  <option value="{{data['ofnames'][0]}}" selected>
-		  	<div>
-		  		<p>{{ data['time'][0]}}</p><br>
-			  	{{data['ofnames'][0]}}
-		  	</div>
-		  </option>
-		  {% for i in range(1, data['olength']) %}
-		    <option value="{{data['ofnames'][i]}}">
-		    	<div>
-		    		<p>{{data['time'][i]}}</p><br>
-			    	{{data['ofnames'][i]}}
-		    	</div>
-		    </option>
-		  {% endfor %}
-		</select>
-		<input type="submit" value="Submit">
-	</form>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Upload</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
+	<style>
+		.tab-pane {
+			padding: 25px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="container">
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#home">
+					<h4>Upload new files</h4>
+				</a></li>
+			<li><a data-toggle="tab" href="#menu1">
+					<h4>Select already uploaded files</h4>
+				</a></li>
+			<li><a data-toggle="tab" href="#menu2">
+					<h4>Select already analysed KML files</h4>
+				</a></li>
+		</ul>
+
+		<div class="tab-content">
+			<div id="home" class="tab-pane fade in active">
+				<p>
+					{% with messages = get_flashed_messages() %}
+					{% if messages %}
+					<ul class=flashes>
+						{% for message in messages %}
+						<li>{{ message }}</li>
+						{% endfor %}
+					</ul>
+					{% endif %}
+					{% endwith %}
+				</p>
+				<form method="post" action="/" enctype="multipart/form-data">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-3">
+								<label>Excel customer data-file:</label>
+							</div>
+							<div class="col-md-3">
+								<input type="file" name="datafile" class="form-control" required>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-3">
+								<label>KML map data-file</label>
+							</div>
+							<div class="col-md-3">
+								<input type="file" name="kmlfile" class="form-control" required>
+							</div>
+						</div>
+					</div>
+					<button type="submit" class="btn btn-default">Submit</button>
+				</form>
+			</div>
+			<div id="menu1" class="tab-pane fade">
+				<form method="post" action="/">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-3">
+								<label>Select customer data-file:</label>
+
+							</div>
+							<div class="col-md-6">
+								<select name="datafilename" id="datafilename">
+									<option value="{{data['datafilenames'][0]}}" selected>
+										<div>
+											<p>{{ data['time'][0]}}</p><br>
+											{{data['datafilenames'][0]}}
+										</div>
+									</option>
+									{% for i in range(1, data['length']) %}
+									<option value="{{data['datafilenames'][i]}}">
+										<div>
+											<p>{{data['time'][i]}}</p><br>
+											{{data['datafilenames'][i]}}
+										</div>
+									</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-3">
+								<label>Select KML map data-file</label>
+							</div>
+							<div class="col-md-6">
+								<select name="kmlfilename" id="kmlfilename">
+									<option value="{{data['kmlfilenames'][0]}}" selected>
+										<div>
+											<p>{{ data['time'][0]}}</p><br>
+											{{data['kmlfilenames'][0]}}
+										</div>
+									</option>
+									{% for i in range(1, data['length']) %}
+									<option value="{{data['kmlfilenames'][i]}}">
+										<div>
+											<p>{{data['time'][i]}}</p><br>
+											{{data['kmlfilenames'][i]}}
+										</div>
+									</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+					</div>
+					<button type="submit" class="btn btn-default">Submit</button>
+				</form>
+			</div>
+			<div id="menu2" class="tab-pane fade">
+				<form method="post" action="/">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-3">
+								<label>Select already analysed KML files</label>
+							</div>
+							<div class="col-md-6">
+								<select name="outfilefromdb" id="outfilefromdb">
+									<option value="{{data['ofnames'][0]}}" selected>
+										<div>
+											<p>{{ data['time'][0]}}</p><br>
+											{{data['ofnames'][0]}}
+										</div>
+									</option>
+									{% for i in range(1, data['olength']) %}
+									<option value="{{data['ofnames'][i]}}">
+										<div>
+											<p>{{data['time'][i]}}</p><br>
+											{{data['ofnames'][i]}}
+										</div>
+									</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+					</div>
+					<button type="submit" class="btn btn-default">Submit</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+	$(document).ready(function () {
+		$('#datafilename').select2();
+	});
+	$(document).ready(function () {
+		$('#kmlfilename').select2();
+	});
+	$(document).ready(function () {
+		$('#outfilefromdb').select2();
+	});
+</script>
+
+</html>
