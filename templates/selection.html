@@ -37,9 +37,12 @@
 		</div>
 		<button type="submit" class="btn btn-default">Submit</button>
 	</form>
+	<br />
+
 
 	<!-- This will be for the choice of range or selection -->
 	{% if data['flag'] >= 1%}
+	<hr />
 	<form method="post">
 		<div class="form-group">
 			<div class="row">
@@ -64,10 +67,13 @@
 		<button type="submit" class="btn btn-default">Submit</button>
 
 	</form>
+	<br />
+
 	{% endif %}
 
 	<!-- This will be for doing subsequent action -->
 	{% if data['selected_choice']=='range'%}
+	<hr />
 	<form method="post">
 		<div class="form-group">
 			<div class="row">
@@ -86,7 +92,7 @@
 				<div class="row">
 					<div class="col-md-3">
 						<label>
-								Select range
+							Select range
 						</label>
 					</div>
 					<div class="col-md-4">
@@ -113,7 +119,9 @@
 
 		<button type="submit" class="btn btn-default">Submit</button>
 	</form>
+	<br />
 	{% elif data['selected_choice']=='discrete' %}
+	<hr />
 	<form method="post">
 		<div class="form-group">
 			<div class="row">
@@ -122,12 +130,15 @@
 						Select one (or more) value(s) of which you want to form clusters of
 					</label>
 				</div>
-				<div class="col-md-4">
-					<select name="val" id="val">
+				<div class="col-md-9">
+					<div class="row">
 						{% for v in data['col_values'] %}
-						<input type="checkbox" name="{{v}}" value="{{v}}" />{{v}}<br>
+						<div class="col-md-3">
+							<input type="checkbox" name="{{v}}" value="{{v}}" />{{v}}
+						</div>
 						{% endfor %}
-					</select>
+					</div>
+
 				</div>
 			</div>
 		</div>
@@ -143,11 +154,12 @@
 				</div>
 			</div>
 		</div>
-		<button type="submit" class="btn btn-default">Submit</button>
+		<button type="submit" class="btn btn-default last-element">Submit</button>
 	</form>
+	<br />
+
 	{% endif %}
 
-	</select>
 </div>
 
 {% endblock %}
