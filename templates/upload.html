@@ -1,5 +1,5 @@
 	{% extends 'layout.html' %}
-	
+
 	{% block content %}
 
 	<div class="container">
@@ -63,17 +63,11 @@
 							<div class="col-md-6">
 								<select name="datafilename" id="datafilename">
 									<option value="{{data['datafilenames'][0]}}" selected>
-										<div>
-											<p>{{ data['time'][0]}}</p><br>
-											{{data['datafilenames'][0]}}
-										</div>
+										{{data['datafilenames'][0]}} (<p>{{ data['time'][0]}}</p>)
 									</option>
 									{% for i in range(1, data['length']) %}
 									<option value="{{data['datafilenames'][i]}}">
-										<div>
-											<p>{{data['time'][i]}}</p><br>
-											{{data['datafilenames'][i]}}
-										</div>
+										{{data['datafilenames'][i]}}(<p>{{data['time'][i]}}</p>)
 									</option>
 									{% endfor %}
 								</select>
@@ -89,17 +83,11 @@
 							<div class="col-md-6">
 								<select name="kmlfilename" id="kmlfilename">
 									<option value="{{data['kmlfilenames'][0]}}" selected>
-										<div>
-											<p>{{ data['time'][0]}}</p><br>
-											{{data['kmlfilenames'][0]}}
-										</div>
+										{{data['kmlfilenames'][0]}} (<p>{{ data['time'][0]}}</p>)
 									</option>
 									{% for i in range(1, data['length']) %}
 									<option value="{{data['kmlfilenames'][i]}}">
-										<div>
-											<p>{{data['time'][i]}}</p><br>
-											{{data['kmlfilenames'][i]}}
-										</div>
+										{{data['kmlfilenames'][i]}} (<p>{{data['time'][i]}}</p>)
 									</option>
 									{% endfor %}
 								</select>
@@ -119,17 +107,11 @@
 							<div class="col-md-6">
 								<select name="outfilefromdb" id="outfilefromdb">
 									<option value="{{data['ofnames'][0]}}" selected>
-										<div>
-											<p>{{ data['time'][0]}}</p><br>
-											{{data['ofnames'][0]}}
-										</div>
+										{{data['ofnames'][0]}} (<p class="small-text">{{ data['time'][0]}}</p>)
 									</option>
 									{% for i in range(1, data['olength']) %}
 									<option value="{{data['ofnames'][i]}}">
-										<div>
-											<p>{{data['time'][i]}}</p><br>
-											{{data['ofnames'][i]}}
-										</div>
+										{{data['ofnames'][i]}} (<p class="small-text">{{data['time'][i]}}</p>)
 									</option>
 									{% endfor %}
 								</select>

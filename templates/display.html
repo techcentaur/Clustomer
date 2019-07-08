@@ -1,28 +1,43 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <title>KML Display</title>
-    
-    <style>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
+  <title>KML Display</title>
+
+  <style>
     #map {
+      width: 50%;
       height: 80%;
     }
-    html, body {
+
+    html,
+    body {
       height: 100%;
       margin: 0;
       padding: 0;
     }
-    </style>
-    <script type="text/javascript">
+  </style>
 
+</head>
+
+<body>
+  <script type="text/javascript">
     var bigurl = '{{data["github_url"]|safe}}';
 
     function initMap() {
       var map = new google.maps.Map(document.getElementById('map'), {
         zoom: 11,
-        center: {lat: 41.876, lng: -87.624}
+        center: {
+          lat: 41.876,
+          lng: -87.624
+        }
       });
 
       var ctaLayer = new google.maps.KmlLayer({
@@ -30,18 +45,19 @@
         map: map
       });
     }
-</script>
-  </head>
-  <body>
-<div id="map"></div>
-<div>
-  <a href="{{ data['download_url'] | safe}}"><p>Download kml file from here</p></a>
-</div>
-<div>
-  <a href="{{ data['save_url'] | safe }}">Save this KML file</a>
-</div>
-<!-- Replace the value of the key parameter with your own API key. -->
-<script async defer src="{{ data['api_url'] | safe }}">
-</script>
-  </body>
+  </script>
+  <div id="map"></div>
+  <div class="container">
+    <a href="{{ data['download_url'] | safe}}">
+      <p>Download kml file from here</p>
+    </a>
+    <a href="{{ data['save_url'] | safe }}">
+      <p>Save this KML file</p>
+    </a>
+  </div>
+  <!-- Replace the value of the key parameter with your own API key. -->
+  <script async defer src="{{ data['api_url'] | safe }}">
+  </script>
+</body>
+
 </html>
