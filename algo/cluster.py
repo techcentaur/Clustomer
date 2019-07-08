@@ -1,16 +1,26 @@
-"""Clustering Algorithm"""
+"""Weighted Clustering Algorithm and Support for Logical Queries from Dataframe"""
 
-import random
-import pprint
-from .script import (ReferenceFrame, ReadGridData)
-from collections import OrderedDict
+
+from random import sample
 from pandas import read_excel
+from collections import OrderedDict
+
+from .script import (ReferenceFrame, ReadGridData)
 
 class Cluster:
+	"""
+	@params: n(int): Number of clusters to be formed
+	"""
 	def __init__(self, n):
 		self.n = n
 
 	def get_points_from_names(self, rd, rf):
+		"""Get a list of points as a tuple of (x-cord, y-cord, weight) where x-cord and y-cord are based on `rf` reference frame.
+		With input as the grid_list public attribute from `rd` object.
+
+		@params: rd (object): ReadGridData
+				 rf (object): ReferenceFrame
+		"""
 		points = []
 		
 		for i in rd.grid_list:
@@ -20,13 +30,22 @@ class Cluster:
 		return points
 
 	def get_clusters(self, data):
+		"""	Run clustering algorithm and save the result in self as below written attributes.
+			self.centroids: The last calculated centroids
+			self.prev_clusters: The last formed clusters
+
+			@params: data: List of all points in a format (x-cord, y-cord, weight) or as an output of public method of this class: `get_points_from_names()`
+		"""
 		def weighted_distance(i, j):
+			""" weighted distance: (((j[0] - i[0])**2 + (j[1] - i[1])**2)/(j[2] + i[2]))**0.5
+				@params: i, j: tuples with (x-cord, y-cord, weight)
+			"""
 			return (((j[0] - i[0])**2 + (j[1] - i[1])**2)/(j[2] + i[2]))**0.5
 
 		not_converged = True
 
 		# CENTROIDS: Sample n points randomly | call them centroids
-		tmp_idx = random.sample(range(len(data)), self.n)
+		tmp_idx = sample(range(len(data)), self.n)
 		tmp_idx.sort()
 
 		self.centroids = [data[i] for i in tmp_idx]
@@ -43,13 +62,9 @@ class Cluster:
 
 
 		iteration = 0
-		# print("[*] Clustering: ")
 		while not_converged:
-			# calculate new centroids
 			for i in range(len(self.centroids)):
 				self.old_centroids[i] = self.centroids[i]
-			# print(self.old_centroids)
-			# print(self.centroids)
 
 			for i in range(len(prev_clusters)):
 				sumx, sumy, sumw = 0, 0, 0
@@ -77,23 +92,33 @@ class Cluster:
 				next_clusters[i] = []
 				# self.old_centroids[i] = self.centroids[i]
 
-
-			# print(diff)
 			if diff < 0.01:
 				not_converged = False
-				# print("[#] Converged at ")
-				# print("[.] Converged on", iteration, "iteration and", diff, "difference.")
 
 			iteration += 1
-			# break
 		self.prev_clusters = prev_clusters
 
-# Can be used as API function
-def get_dict(data_frame, no_of_clusters=5):
+		return True
+
+# Can be used as a direct API function in back-end logic
+def get_dict(data_frame, no_of_clusters):
+	"""	Run clustering algorithm and get data in the form of dicts:
+
+		1. Create ReadGridData and ReferenceFrame object with give dataframe as data
+		2. Run `get_clusters` function from Cluster with the data
+		3. Form ordered dict information from the calculated clusters
+
+		@params:
+		`data_frame` (pandas dataframe): Data
+		`no_of_clusters` (int): No of clusters to be formed
+
+		@return: (Both dicts are `OrderedDict`)
+		`weight_dict`: weights of the centroids in decreasing order
+		`dict_data`: corresponding grid names of the x, y coordinates
+	"""
 	cl = Cluster(no_of_clusters)
 	
-	df = data_frame
-	rd = ReadGridData(df)
+	rd = ReadGridData(data_frame)
 	rf = ReferenceFrame(rd)
 
 	data = cl.get_points_from_names(rd, rf)
@@ -112,7 +137,14 @@ def get_dict(data_frame, no_of_clusters=5):
 
 
 class Logic:
+	"""Support wrapper for query logic from pandas dataframe"""
 	def __init__(self, data_file_path, query, logger):
+		""" Read excel data and set up self attributes
+
+			@params: data_file_path: file path of the excel data file
+					 query: query as a dict in particular format (look for app.py doc for more)
+					 logger: logger object for logs
+		"""
 		self.logger = logger
 
 		if (data_file_path.rsplit(".", 1)[1]).lower() == "xlsx":
@@ -123,26 +155,36 @@ class Logic:
 		self.query = query
 
 	def get_query_string(self, query):
+		""" If the query is of type discrete convert it to a dataframe support query
+			for e.g. [4, 5, 6] -> (col==4 | col==5 | col==6) for a column col
+
+			@params: query: dict with column as keys
+		"""
+
 		string = ""
 		for key in query:
 			for jdx, val in enumerate(query[key]):
 				string += "( " + str(key) + "==" + str(val) + " )"
+				
 				if len(query[key]) > 1:
 					if jdx != (len(query[key])-1):
 						string += " or "
 
 		return string
 
-	def get_data_frame(self, string=None):
+	def get_data_frame(self):
+		"""
+
+		"""
+
 		query = self.query
 
 		if query['type'] == 'discrete':
-			return self.df.query(string)
+			query.pop("type", None)
+			return self.df.query(self.get_query_string(query))
 		elif query['type'] == 'date':
-			print(":Date")
 			return self.df[(self.df[query['col']] >= query['from']) & (self.df[query['col']] <= query['to'])]
 		elif query['type'] == 'time':
-			print(":Time")
 			return self.df[(self.df[query['col']] >= query['from']) & (self.df[query['col']] <= query['to'])]		
 		else:
 			return self.df
