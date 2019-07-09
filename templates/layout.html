@@ -16,14 +16,14 @@
         }
 
         .footer {
-            height: 100px;
+            height: 40px;
             position: fixed;
             left: 0;
             bottom: 0;
             width: 100%;
             background-color: #adabab;
             color: black;
-            text-align: center;
+            text-align: left;
         }
         
         .last-element{
@@ -32,6 +32,12 @@
 
         .small-text{
             font-size: 4px;
+        }
+        .contact{
+            margin-left: 15%;
+        }
+        .style11{
+            width: 70% !important;
         }
     </style>
     
@@ -54,9 +60,9 @@
     {% endblock %}
 
     <!-- Footer -->
-    <div class="footer">
-        <p>Footer</p>
-    </div>
+    <!--     <div class="footer">
+        <p class="contact">Contact here</p>
+    </div> -->
     <script>
         $(document).ready(function () {
             $('#datafilename').select2();

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Application"""
 
 import os
@@ -297,6 +299,7 @@ def result_page(out_file_name):
                  ))
             conn.commit()
             conn.close()
+            flash("[*] KML file saved!")
     except BaseException:
         logger.critical("[!] Cannot save the outfile")
 
@@ -404,7 +407,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.flask:
-        app.run(host="0.0.0.0")
+        app.run(host="0.0.0.0", debug=True)
     else:
         data = {
             "data_file_path": app.config['UPLOAD_FOLDER'] + "/" + str(args.xlsx),

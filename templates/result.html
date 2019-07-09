@@ -2,15 +2,24 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container list-group">
 	<div>
-		<a href="{{data['download_url']}}">Download the kml file</a>
+		<a href="{{data['download_url']}}" class="list-group-item">Download the kml file</a>
 	</div>
 	<div>
-		<a href="{{ url_for('show_kml', out_file_name=data['out_file_name']) }}">View KML file in Google Maps</a>
+		<a href="{{ url_for('show_kml', out_file_name=data['out_file_name']) }}" class="list-group-item">View KML file in Google Maps</a>
 	</div>
 	<div>
-		<a href="{{ data['save_url'] }}">Save this KML file</a>
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		<ul class=flashes style="margin-top: 2px !important; text-decoration: none !important;">
+			{% for message in messages %}
+			<li>{{ message }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+		<a href="{{ data['save_url'] }}" class="list-group-item">Save this KML file</a>
 	</div>
 </div>
 
