@@ -1,7 +1,7 @@
 """Helper classes for forming refrence frame and reading grid data from excel"""
 
 import re
-from collections import Counters
+from collections import Counter
 
 
 class ReferenceFrame:

@@ -391,7 +391,7 @@ def complete_process(file1, file2):
     return r
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Clustomer: Clustering customers onto a map in KML given a geo-location in Excel data format')
+    parser = ArgumentParser(description='Clustomer: Clustering customers onto a map in KML given a geo-location in Excel data format')
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("-flask", "--flask", help="Run flask app", action="store_true")
@@ -412,7 +412,7 @@ if __name__ == "__main__":
             "number_of_clusters": int(args.clusters)
         }
 
-        logic = cluster.Logic(args.xlsx, query={}, logger)
+        logic = cluster.Logic(args.xlsx, query={}, logger=logger)
         c = coloring.ColorKML(
             data, logger=logger, logic=logic, process=True)
         print("[*] File saved as {}".format("updated_"+str(args.kml)))
