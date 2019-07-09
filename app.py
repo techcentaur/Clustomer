@@ -9,6 +9,7 @@ import datetime
 
 from copy import deepcopy
 from pandas import read_excel
+from argparse import ArgumentParser
 
 from werkzeug.utils import secure_filename
 from flask import (
@@ -384,7 +385,36 @@ def get(filename):
     return resp
 
 # api.add_resource(APIs, '/api/v1/out.kml')
-
+@app.route('/api/v1/process/<file1>/<file2>')
+def complete_process(file1, file2):
+    r = requests.post(url, files=files)
+    return r
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    parser = argparse.ArgumentParser(description='Clustomer: Clustering customers onto a map in KML given a geo-location in Excel data format')
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-flask", "--flask", help="Run flask app", action="store_true")
+    group.add_argument("-clu", "--clu", help="Use command line utility", action="store_true")
+
+    parser.add_argument("-k", "--kml", type=str, help="Geolocation map in kml format")
+    parser.add_argument("-x", "--xlsx", type=str, help="Data of customers in excel format")
+    parser.add_argument("-c", "--clusters", type=int, default=5, help="Number of clusters")
+    
+    args = parser.parse_args()
+
+    if args.flask:
+        app.run(host="0.0.0.0")
+    else:
+        data = {
+            "data_file_path": app.config['UPLOAD_FOLDER'] + "/" + str(args.xlsx),
+            "kml_file_path": app.config['UPLOAD_FOLDER'] + "/" + str(args.kml),
+            "number_of_clusters": int(args.clusters)
+        }
+
+        logic = cluster.Logic(args.xlsx, query={}, logger)
+        c = coloring.ColorKML(
+            data, logger=logger, logic=logic, process=True)
+        print("[*] File saved as {}".format("updated_"+str(args.kml)))
+
+        logger.debug("[*] File saved as {}".format("updated_"+str(args.kml)))
