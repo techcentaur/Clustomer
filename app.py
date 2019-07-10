@@ -325,7 +325,7 @@ def result_page(out_file_name):
                  ))
             conn.commit()
             conn.close()
-            flash("[*] KML file saved!")
+            # flash("[*] KML file saved!")
     except BaseException:
         logger.critical("[!] Cannot save the outfile")
 
