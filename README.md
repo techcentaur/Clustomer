@@ -43,22 +43,37 @@ optional arguments:
 ```
 #### Using from Python
 ```python3
+>>> import logging
+>>> logging.basicConfig(filename="somefile.log", level=logging.DEBUG)
+>>> logger = logging.getLogger('LOG')
+>>>
+>>> from algo import *
+>>> data = {
+...     "data_file_path": "f1.xlsx",
+...     "kml_file_path": "f2.kml",
+...     "number_of_clusters": 5
+... }
+>>> logic = cluster.Logic(args.xlsx, query={}, logger=logger)
+>>> c = coloring.ColorKML(data, logger=logger, logic=logic, process=True)
+[*] File saved as updated_f2.kml
 
 ```
+_Note_: Look into documentation to know how to gain more manual control with `process=False`
 
 ## How to Troubleshoot
 1. **Look in the Logs**: Look in `/logs` folder for the most recent log. The log-files are in a format as `YYYY-MM-DD HH-MM-logfile.log`, i.e., as an example: `2019-07-10 11-46-logfile.log`.
 
-2. If logic halts and application misbehaves, feel free to drop a mail [here](mailto: ankit03june@gmail.com), with a subject starting from `CLUSTOMER ISSUE: <>`. I would be glad to solve it.
+2. If logic halts and application misbehaves, feel free to drop a mail [here](mailto:ankit03june@gmail.com), with a subject starting from `CLUSTOMER ISSUE: <>`. I would be glad to solve it.
 
 ## How to View KML Files 
 
 1. KML files can be viewed in Google-Earth PRO
-```console
-Here is how to download google earth: 
-	- Download GEP from [here](https://www.google.com/earth/download/gep/agree.html).
-	- Double-click the file and follow the installation process.
-	-  To open Google Earth Pro, click Start and then Programs and then Google Earth Pro. Then, click Google Earth Pro.
-``` 
-2. View it online. This [website](http://kmlviewer.nsspot.net/) would work.
-Note: KML files can also be viewed in Google-maps
+
+	- Here is how to download google earth: 
+		- Download GEP from [here](https://www.google.com/earth/download/gep/agree.html).
+		- Double-click the file and follow the installation process.
+		-  To open GEP, click _Start_ and then _Programs_ and then _Google Earth Pro_. Then, click Google Earth Pro.
+ 
+2. View it online: This [website](http://kmlviewer.nsspot.net/) would work.
+
+_Note_: KML files can also be viewed in Google-maps
