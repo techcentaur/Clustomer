@@ -1,4 +1,4 @@
-## Clustomer
+# Clustomer
 Real time customer data analysis platform with results in geo-location clusters mapped on KML file (can be viewed in Google Maps)
 
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
@@ -41,6 +41,7 @@ optional arguments:
                         Number of clusters
 
 ```
+
 #### Using from Python
 ```python3
 >>> import logging
