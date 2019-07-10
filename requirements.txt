@@ -1,9 +1,11 @@
-copy
-flask
-flask_restful
-flask_cors
 pandas
 argparse
 pygithub
 seaborn
 pprint
+pyyaml
+requests
+argparse
+flask
+flask_restful
+flask_cors

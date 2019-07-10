@@ -6,7 +6,6 @@ import seaborn as sns
 from .cluster import (get_dict, Logic)
 from collections import OrderedDict
 
-
 class ColorKML:
     def __init__(self, params, logger=None, logic=None, process=False):
         """Initialise attributes:

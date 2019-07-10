@@ -4,7 +4,6 @@
 `coloring.py`:
 `github_wrapper.py`:
 `script.py`:
-`main.py`:
 """
 
 from . import *
