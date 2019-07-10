@@ -1,4 +1,4 @@
-"GitHub Wrapper for File Upload"
+"""GitHub Wrapper for File Upload"""
 
 import base64
 import logging

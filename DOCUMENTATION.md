@@ -217,3 +217,53 @@ class ReadGridData:
 ```
 
 ## Methods and Routes of Web-Application
+
+```python
+@app.route('/', methods=["POST", "GET"])
+def upload_file():
+    """Home route:
+    @utilities:
+    1. Upload new data and kml base file
+    2. Select data and kml base file from already uploaded file
+    3. Select already analysed updated kml file
+    """
+
+
+@app.route('/select/<filename>', methods=['GET', 'POST'])
+def select_content(filename):
+    """Select column from filename route:
+    @utilities:
+    1. Select a new grid column 'Grid' selected by-default
+    2. Select a new column on basis of which the data will be analysed
+    """
+    pass
+
+
+@app.route('/select/<filename>/<grid>/<col>/', methods=['POST', 'GET'])
+def select_values(filename, grid, col):
+    """Select value(s) route:
+    @utilities:
+    1. Select value(s) from a particular column
+    2. Input number of clusters to needed (main call to clustering algorithm exists here)
+    """
+    pass
+
+@app.route('/result_page/<out_file_name>', methods=["GET"])
+def result_page(out_file_name):
+    """Display result route
+    @utilites:
+    1. Save the new and updated KML file in database
+    2. Download the new and updated KML file
+    3. View the KML file in Google Maps
+    """
+    pass
+
+@app.route('/kml_viewer/<out_file_name>', methods=["GET"])
+def show_kml(out_file_name):
+    """View KML route: File in Google MAP with public url of kml data by-passing through github raw user content
+    @utilites:
+    1. Show KML in Google MAPs
+    2. Save the KML file in database
+    """
+    pass
+```

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Application"""
+"""Main Application"""
 
 import os
 import sqlite3
@@ -44,6 +44,13 @@ def allowed_file(filename):
 
 @app.route('/', methods=["POST", "GET"])
 def upload_file():
+    """Home route:
+    @utilities:
+    1. Upload new data and kml base file
+    2. Select data and kml base file from already uploaded file
+    3. Select already analysed updated kml file
+    """
+
     global kml_file_name, data_file_name
     if request.method == 'POST':
         postdata = (request.form).to_dict(flat=False)
@@ -142,6 +149,12 @@ def upload_file():
 
 @app.route('/select/<filename>', methods=['GET', 'POST'])
 def select_content(filename):
+    """Select column from filename route:
+    @utilities:
+    1. Select a new grid column 'Grid' selected by-default
+    2. Select a new column on basis of which the data will be analysed
+    """
+
     if request.method == 'POST':
         geogrid = request.form.get('geogrid')
         column = request.form.get('column')
@@ -175,6 +188,12 @@ def select_content(filename):
 
 @app.route('/select/<filename>/<grid>/<col>/', methods=['POST', 'GET'])
 def select_values(filename, grid, col):
+    """Select value(s) route:
+    @utilities:
+    1. Select value(s) from a particular column
+    2. Input number of clusters to needed (main call to clustering algorithm exists here)
+    """
+
     global data_file_frame
     columns = list(data_file_frame.columns)
     if request.method == 'POST':
@@ -283,6 +302,13 @@ def select_values(filename, grid, col):
 
 @app.route('/result_page/<out_file_name>', methods=["GET"])
 def result_page(out_file_name):
+    """Display result route
+    @utilites:
+    1. Save the new and updated KML file in database
+    2. Download the new and updated KML file
+    3. View the KML file in Google Maps
+    """
+
     global kml_file_name, data_file_name
 
     try:
@@ -318,6 +344,12 @@ def result_page(out_file_name):
 
 @app.route('/kml_viewer/<out_file_name>', methods=["GET"])
 def show_kml(out_file_name):
+    """View KML route: File in Google MAP with public url of kml data by-passing through github raw user content
+    @utilites:
+    1. Show KML in Google MAPs
+    2. Save the KML file in database
+    """
+    
     data = {
         "user": yml_data["github"]["handle"],
         "password": yml_data["github"]["password"],
@@ -407,7 +439,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.flask:
-        app.run(host="0.0.0.0", debug=True)
+        app.run(host="0.0.0.0", debug=False)
     else:
         data = {
             "data_file_path": app.config['UPLOAD_FOLDER'] + "/" + str(args.xlsx),
