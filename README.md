@@ -1,10 +1,15 @@
 ## Clustomer
-Raed time customer data analysis platform with results in geo-location clusters
+Real time customer data analysis platform with results in geo-location clusters mapped on KML file (can be viewed in Google Maps)
+
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
 ## Installation and Setup
 
 #### From Source
 ```
+1. Clone this repository
+2. Run `pip install -r requirements.txt`
+3. Application is ready to be used. See Usage section.
 ```
 
 #### From Docker-image
@@ -37,6 +42,9 @@ optional arguments:
 
 ```
 #### Using from Python
+```python3
+
+```
 
 ## How to Troubleshoot
 1. **Look in the Logs**: Look in `/logs` folder for the most recent log. The log-files are in a format as `YYYY-MM-DD HH-MM-logfile.log`, i.e., as an example: `2019-07-10 11-46-logfile.log`.
