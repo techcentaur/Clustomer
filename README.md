@@ -1,71 +1,56 @@
 ## Clustomer
 Raed time customer data analysis platform with results in geo-location clusters
 
+## Installation and Setup
 
+#### From Source
+```
+```
 
+#### From Docker-image
+```
+```
 
-## Algorithmic Usage and Documentation
+## Usage
 
-### Dependencies
-	- Run `pip3 install -r requirements.txt` to install required modules
-	- Copy the gdaltools folder to `/usr/local/bin/python3.6/dist-pacakages`
+#### Using as a Web-App
+```bash
+solanki@bhavya:~/NOKIA/Clustomer$ python3 app.py --flask
+* Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+```
 
-#### `python3 main.py -h`
-```console
-usage: main.py [-h] [-k KML] [-x XLSX] [-c CLUSTERS]
+#### Using CLU (Command Line Utility)
+```bash
+solanki@bhavya:~/NOKIA/Clustomer$ python3 app.py -h
+usage: app.py [-h] (-flask | -clu) [-k KML] [-x XLSX] [-c CLUSTERS]
 
-Map-Clustering: Clustering customers onto a map given a geo-location.
+Clustomer: Clustering customers onto a map in KML given a geo-location in Excel data format
 
 optional arguments:
   -h, --help            show this help message and exit
+  -flask, --flask       Run flask app
+  -clu, --clu           Use command line utility
   -k KML, --kml KML     Geolocation map in kml format
   -x XLSX, --xlsx XLSX  Data of customers in excel format
   -c CLUSTERS, --clusters CLUSTERS
                         Number of clusters
 
 ```
+#### Using from Python
 
-*Example usage:* `python3 main.py --kml 3G_mumbai_grid_WK18.kml  --xlsx Book8.xlsx -c 5`
+## How to Troubleshoot
+1. **Look in the Logs**: Look in `/logs` folder for the most recent log. The log-files are in a format as `YYYY-MM-DD HH-MM-logfile.log`, i.e., as an example: `2019-07-10 11-46-logfile.log`.
 
+2. If logic halts and application misbehaves, feel free to drop a mail [here](mailto: ankit03june@gmail.com), with a subject starting from `CLUSTOMER ISSUE: <>`. I would be glad to solve it.
 
-### Files
+## How to View KML Files 
 
-#### `script.py`
-
-```python
-class ReadData:
-	"""To read data from an xlsx file
-		And return one possible mapping params
-		X-shift:
-		Y-Mapping:
-	"""
-	pass
-
-class ReferenceFrame:
-	"""Take params of ReadData as input:
-	And functions for refrenece data
-	"""
-	pass
-
-```
-
-#### `cluster.py`
-
-Use `get_dict(no_of_clusters)` public function in `cluster.py` to use as an API and get clusters returned in dictionary.
-
-#### `parser.py`
-
-```python
-
-def convert_KML_2_GeoJSON(filename):
-	"""This will convert the KML file to GeoJSON"""
-
-def update_Geo_JSON(filename):
-	"""Changing the opacity and restructring the whole JSON tree"""
-
-def convert_KML_2_GeoJSON(filename):
-	"""This will convert the GeoJSON file to KML. Clusters are colored"""
-
-def modify_kml_according_to_clusters(filename):
-	"""It take clusters and points from KML as input and colors the grid accordingly """
-```
+1. KML files can be viewed in Google-Earth PRO
+```console
+Here is how to download google earth: 
+	- Download GEP from [here](https://www.google.com/earth/download/gep/agree.html).
+	- Double-click the file and follow the installation process.
+	-  To open Google Earth Pro, click Start and then Programs and then Google Earth Pro. Then, click Google Earth Pro.
+``` 
+2. View it online. This [website](http://kmlviewer.nsspot.net/) would work.
+Note: KML files can also be viewed in Google-maps
