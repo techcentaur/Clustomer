@@ -78,10 +78,12 @@
 		<div class="form-group">
 			<div class="row">
 				<div class="col-md-3">
-					<label>Select a value of which you want to form clusters of</label>
+						<label>
+							Select range
+						</label>
 				</div>
 				<div class="col-md-4">
-					<select name="from_range" id="from_range">
+					<select name="from_range" id="from_range" style="width: 70% !important;">
 						{% for v in data['from_range'] %}
 						<option value="{{v}}">{{v}}</option>
 						{% endfor %}
@@ -91,12 +93,9 @@
 			<div class="form-group">
 				<div class="row">
 					<div class="col-md-3">
-						<label>
-							Select range
-						</label>
 					</div>
 					<div class="col-md-4">
-						<select name="to_range" id="to_range">
+						<select name="to_range" id="to_range" style="width: 70% !important;">
 							{% for v in data['from_range'] %}
 							<option value="{{v}}">{{v}}</option>
 							{% endfor %}
